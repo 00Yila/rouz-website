@@ -1,0 +1,10 @@
+<!doctype html><html><body style="margin:0;background:#888"><div id="o" style="display:flex;flex-direction:column;gap:6px"></div>
+<script type="module">
+import * as pdfjs from 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.min.mjs';
+pdfjs.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs';
+window.go=async(f,pages,w)=>{o.innerHTML='';const doc=await pdfjs.getDocument(f).promise;
+for(const i of pages){const p=await doc.getPage(i);const v0=p.getViewport({scale:1});const v=p.getViewport({scale:w/v0.width});
+const c=document.createElement('canvas');c.width=v.width;c.height=v.height;o.appendChild(c);await p.render({canvasContext:c.getContext('2d'),viewport:v}).promise;}
+return 'ok'};
+window.crop=async(f,pg,w,x,y,cw,ch)=>{o.innerHTML='';document.body.style.background='#fff';const doc=await pdfjs.getDocument(f).promise;const p=await doc.getPage(pg);const v0=p.getViewport({scale:1});const v=p.getViewport({scale:w/v0.width});const c=document.createElement('canvas');c.width=v.width;c.height=v.height;await p.render({canvasContext:c.getContext('2d'),viewport:v}).promise;const d=document.createElement('canvas');d.width=cw;d.height=ch;d.getContext('2d').drawImage(c,-x,-y);o.appendChild(d);return 'ok'};
+</script></body></html>

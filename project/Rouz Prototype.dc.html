@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Young+Serif&display=swap" rel="stylesheet"><script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script><style>body{margin:0;background:#D9D4CB;font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased}a{color:#B1232F;text-decoration:none}a:hover{color:#8A1A24}button{font-family:inherit}input,select,textarea{font-family:inherit}</style></helmet>
+<div style="height:56px;background:#0E1730;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;gap:16px;font-size:13px;position:sticky;top:0;z-index:50">
+<div style="display:flex;gap:12px;align-items:center"><span style="font-weight:700">Rouz · interactive prototype</span><span style="color:#9AA3B8">{{ pageLabel }}</span></div>
+<div style="display:flex;gap:4px;background:#1E2A48;padding:4px;border-radius:8px">
+<sc-for list="{{ deviceChips }}" as="c" hint-placeholder-count="2"><button onClick="{{ c.onClick }}" style="border:0;border-radius:6px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;background:{{ c.bg }};color:{{ c.fg }};display:flex;gap:6px;align-items:center"><i class="{{ c.icon }}"></i>{{ c.label }}</button></sc-for>
+</div>
+<button onClick="{{ resetAll }}" style="background:none;border:1px solid #3A4666;color:#C9CEDA;border-radius:6px;padding:7px 12px;font-size:13px;cursor:pointer">Reset</button>
+</div>
+
+<div style="display:flex;justify-content:center;padding:{{ outerPad }}">
+<div style="position:relative;width:{{ fw }};height:{{ fh }};border-radius:{{ fr }};border:{{ fbd }};overflow:hidden;background:#fff;container-type:inline-size;font-family:'Hanken Grotesk',sans-serif;color:#1F4FB4;box-sizing:content-box">
+<div ref="{{ scrollRef }}" style="height:100%;overflow-y:auto;overflow-x:hidden;scroll-behavior:auto">
+
+<sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+<div style="background:#1F4FB4;color:#fff;font-size:13px;display:flex;justify-content:space-between;align-items:center;padding:10px clamp(20px,8.3cqi,120px);gap:16px">
+<div style="display:flex;gap:24px;align-items:center"><span style="font-weight:600">Rouz Hospital and Maternity</span><button onClick="{{ go.elmaor }}" style="background:none;border:0;color:#D9CDE6;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:6px;padding:0"><span style="width:7px;height:7px;border-radius:50%;background:#9C73C2"></span>Elmaor Fertility Clinic</button></div>
+<div style="display:flex;gap:24px;color:#C9CEDA;align-items:center"><span>Apo Quarters, Gudu District, Abuja</span><button onClick="{{ simCall }}" style="background:none;border:0;color:#fff;font-weight:600;cursor:pointer;font-size:13px;padding:0">0704 473 6867</button></div>
+</div>
+</sc-if>
+<header style="position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid #ECE6DA;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:{{ headPad }}">
+<button onClick="{{ go.home }}" style="background:none;border:0;padding:0;cursor:pointer;flex:none"><img src="assets/logos/rouz-horizontal-color.png" alt="Rouz Hospital and Maternity, home" style="height:{{ logoH }};width:auto;display:block"></img></button>
+<sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+<nav style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px 22px;font-size:15px;font-weight:500">
+<sc-for list="{{ navItems }}" as="n" hint-placeholder-count="8"><button onClick="{{ n.onClick }}" style="background:none;border:0;border-bottom:2px solid {{ n.bd }};padding:8px 0;cursor:pointer;font-size:15px;font-weight:500;color:{{ n.color }}" style-hover="color:#B1232F">{{ n.label }}</button></sc-for>
+</nav>
+<button onClick="{{ openBookAny }}" style="flex:none;background:#B1232F;color:#fff;font-weight:600;font-size:15px;height:48px;padding:0 20px;border-radius:6px;border:0;cursor:pointer" style-hover="background:#8A1A24">Book an appointment</button>
+</sc-if>
+<sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:8px">
+<button onClick="{{ simCall }}" aria-label="Call" style="width:48px;height:48px;border-radius:6px;background:#F7F3EC;color:#B1232F;border:0;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer"><i class="ph ph-phone"></i></button>
+<button onClick="{{ toggleMenu }}" aria-label="Menu" style="width:48px;height:48px;border-radius:6px;border:1px solid #E6E0D4;background:#fff;color:#1F4FB4;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer"><i class="ph ph-list"></i></button>
+</div>
+</sc-if>
+</header>
+
+<sc-if value="{{ p.home }}" hint-placeholder-val="{{ true }}">
+<div style="position:relative;min-height:clamp(520px,44cqi,640px);background:#1F4FB4;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end">
+<img src="assets/exterior.jpg" alt="Rouz Hospital main building in Apo Quarters, Abuja" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%"></img>
+<div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(31, 79, 180,.92) 0%,rgba(31, 79, 180,.7) 50%,rgba(31, 79, 180,.25) 100%)"></div>
+<div style="position:relative;padding:clamp(48px,7cqi,110px) clamp(20px,8.3cqi,120px);max-width:680px;color:#fff">
+<div style="font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#F1D9A0">Apo Quarters · Gudu District, Abuja</div>
+<h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(32px,4cqi,58px);line-height:1.1;margin:18px 0 20px;text-wrap:balance">Care you can reach, explained clearly, from people who know your family.</h1>
+<p style="font-size:clamp(16px,1.3cqi,19px);line-height:1.55;margin:0 0 32px;color:#E6E8EE;max-width:540px">A family hospital with maternity and fertility care at its centre: from planning a pregnancy to the baby's first years, on one site.</p>
+<div style="display:flex;gap:12px;flex-wrap:wrap">
+<button onClick="{{ openBookAny }}" style="background:#B1232F;color:#fff;font-weight:600;font-size:16px;height:52px;padding:0 24px;border-radius:6px;border:0;cursor:pointer" style-hover="background:#8A1A24">Book an appointment</button>
+<button onClick="{{ simCall }}" style="background:transparent;border:1.5px solid #fff;color:#fff;font-weight:600;font-size:16px;height:52px;padding:0 24px;border-radius:6px;cursor:pointer;display:flex;gap:8px;align-items:center"><i class="ph ph-phone"></i>Call 0704 473 6867</button>
+</div>
+</div>
+</div>
+<div style="padding:clamp(48px,5cqi,72px) clamp(20px,8.3cqi,120px)">
+<h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(26px,2.3cqi,32px);margin:0 0 24px">What do you need today?</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:12px">
+<button onClick="{{ openBookAny }}" style="background:#B1232F;color:#fff;border-radius:10px;padding:22px;border:0;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:10px;min-height:150px" style-hover="background:#8A1A24"><i class="ph ph-calendar-check" style="font-size:30px"></i><span style="font-size:19px;font-weight:600">Book an appointment</span><span style="font-size:14px;line-height:1.5;color:#F6DADC">Pick a clinic and a day. We call to confirm.</span></button>
+<button onClick="{{ simCall }}" style="background:#F7F3EC;color:#1F4FB4;border-radius:10px;padding:22px;border:0;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:10px" style-hover="background:#EFE8DB"><i class="ph ph-phone" style="font-size:30px;color:#B1232F"></i><span style="font-size:19px;font-weight:600">Call the hospital</span><span style="font-size:14px;line-height:1.5;color:#4A5468">0704 473 6867 · 0909 865 5547</span></button>
+<button onClick="{{ simWa }}" style="background:#F7F3EC;color:#1F4FB4;border-radius:10px;padding:22px;border:0;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:10px" style-hover="background:#EFE8DB"><i class="ph ph-whatsapp-logo" style="font-size:30px;color:#B1232F"></i><span style="font-size:19px;font-weight:600">Message on WhatsApp</span><span style="font-size:14px;line-height:1.5;color:#4A5468">Ask a question or check your HMO cover.</span></button>
+<button onClick="{{ go.contact }}" style="background:#F7F3EC;color:#1F4FB4;border-radius:10px;padding:22px;border:0;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:10px" style-hover="background:#EFE8DB"><i class="ph ph-map-pin" style="font-size:30px;color:#B1232F"></i><span style="font-size:19px;font-weight:600">Find us</span><span style="font-size:14px;line-height:1.5;color:#4A5468">10 Mobolaji Johnson Str., Apo Quarters Zone D.</span></button>
+</div>
+</div>
+<div style="padding:0 clamp(20px,8.3cqi,120px) clamp(48px,6.5cqi,96px)">
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:28px">
+<div><div style="font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#B1232F">Departments</div><h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(28px,2.8cqi,40px);line-height:1.15;margin:14px 0 0">Eight departments on one site.</h2></div>
+<button onClick="{{ go.services }}" style="background:none;border:1.5px solid #1F4FB4;color:#1F4FB4;font-weight:600;font-size:15px;height:48px;padding:0 18px;border-radius:6px;cursor:pointer">All services</button>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:12px">
+<sc-for list="{{ depts }}" as="d" hint-placeholder-count="8">
+<button onClick="{{ d.open }}" style="background:{{ d.bg }};border:1px solid #E6E0D4;border-radius:10px;padding:22px;cursor:pointer;text-align:left;color:#1F4FB4;display:flex;flex-direction:column;gap:8px" style-hover="border-color:#1F4FB4"><i class="{{ d.iconCls }}" style="font-size:28px;color:{{ d.ic }}"></i><span style="font-size:19px;font-weight:600">{{ d.name }}</span><span style="font-size:14px;line-height:1.55;color:#4A5468">{{ d.desc }}</span></button>
+</sc-for>
+</div>
+</div>
+<div style="padding:0 clamp(20px,8.3cqi,120px) clamp(48px,6.5cqi,96px)">
+<div style="background:#1F4FB4;color:#fff;border-radius:14px;overflow:hidden;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr))">
+<img src="assets/scbu.jpg" alt="Special Care Baby Unit" style="width:100%;height:100%;min-height:280px;object-fit:cover"></img>
+<div style="padding:clamp(28px,4.4cqi,64px)">
+<div style="font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#F1D9A0">Maternity and SCBU</div>
+<h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(26px,2.6cqi,38px);line-height:1.15;margin:14px 0 16px">Mother and baby, cared for on the same site from booking to discharge.</h2>
+<p style="font-size:16px;line-height:1.65;color:#C9CEDA;margin:0 0 26px">A Special Care Baby Unit sits next to the maternity service, for newborns who need closer observation after birth.</p>
+<div style="display:flex;gap:12px;flex-wrap:wrap"><button onClick="{{ bookMaternity }}" style="background:#B1232F;color:#fff;font-weight:600;font-size:16px;height:52px;padding:0 22px;border-radius:6px;border:0;cursor:pointer">Start antenatal care</button><button onClick="{{ go.maternity }}" style="background:transparent;border:1.5px solid #fff;color:#fff;font-weight:600;font-size:16px;height:52px;padding:0 22px;border-radius:6px;cursor:pointer">About maternity</button></div>
+</div>
+</div>
+</div>
+<div style="background:#5A2A82;color:#fff;padding:clamp(48px,5.5cqi,80px) clamp(20px,8.3cqi,120px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:clamp(28px,5cqi,72px);align-items:center">
+<div>
+<img src="assets/logos/elmaor-horizontal-reverse.png" alt="Elmaor Fertility Clinic" style="height:56px;width:auto;display:block;margin:0 0 22px -8px"></img>
+<h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(28px,2.8cqi,40px);line-height:1.15;margin:0 0 16px">Hope, honest information and support.</h2>
+<p style="font-size:16px;line-height:1.65;color:#E7DDF0;margin:0 0 28px">Fertility assessment, IVF consultation and treatment cycles, and the Fertility Awareness programme. When treatment works, antenatal care and delivery continue here at Rouz.</p>
+<button onClick="{{ go.elmaor }}" style="background:#fff;color:#5A2A82;font-weight:600;font-size:16px;height:52px;padding:0 22px;border-radius:6px;border:0;cursor:pointer">Visit Elmaor</button>
+</div>
+<img src="assets/elmaor-room.jpg" alt="Elmaor consulting room" style="width:100%;height:clamp(240px,28cqi,400px);object-fit:cover;border-radius:12px"></img>
+</div>
+<div style="padding:clamp(48px,6.5cqi,96px) clamp(20px,8.3cqi,120px)">
+<div style="font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#B1232F">Inside the hospital</div>
+<h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(28px,2.8cqi,40px);line-height:1.15;margin:14px 0 28px">Our own rooms and our own staff.</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px">
+<sc-for list="{{ insidePhotos }}" as="ph" hint-placeholder-count="4">
+<figure style="margin:0"><img src="{{ ph.src }}" alt="{{ ph.t }}" style="width:100%;height:220px;object-fit:cover;border-radius:10px"></img><figcaption style="margin-top:12px;font-size:15px;font-weight:600">{{ ph.t }}</figcaption><div style="font-size:14px;color:#4A5468;margin-top:4px;line-height:1.5">{{ ph.d }}</div></figure>
+</sc-for>
+</div>
+<p style="margin:18px 0 0;font-size:13px;color:#4A5468">Photographed at Rouz Hospital, Apo Quarters. No stock images.</p>
+</div>
+<div style="background:#F7F3EC;padding:clamp(48px,6cqi,88px) clamp(20px,8.3cqi,120px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px">
+<button onClick="{{ go.doctors }}" style="background:#fff;border:0;border-radius:10px;padding:28px;text-align:left;cursor:pointer;color:#1F4FB4;display:flex;flex-direction:column;gap:8px" style-hover="box-shadow:0 0 0 1.5px #1F4FB4"><i class="ph ph-user-list" style="font-size:28px;color:#B1232F"></i><span style="font-size:20px;font-weight:600">Find a doctor</span><span style="font-size:15px;color:#4A5468;line-height:1.55">See who runs each clinic and on which days.</span></button>
+<button onClick="{{ go.hmos }}" style="background:#fff;border:0;border-radius:10px;padding:28px;text-align:left;cursor:pointer;color:#1F4FB4;display:flex;flex-direction:column;gap:8px" style-hover="box-shadow:0 0 0 1.5px #1F4FB4"><i class="ph ph-shield-check" style="font-size:28px;color:#B1232F"></i><span style="font-size:20px;font-weight:600">Check your HMO cover</span><span style="font-size:15px;color:#4A5468;line-height:1.55">Choose your HMO and a service before you come in.</span></button>
+<button onClick="{{ go.news }}" style="background:#fff;border:0;border-radius:10px;padding:28px;text-align:left;cursor:pointer;color:#1F4FB4;display:flex;flex-direction:column;gap:8px" style-hover="box-shadow:0 0 0 1.5px #1F4FB4"><i class="ph ph-newspaper" style="font-size:28px;color:#B1232F"></i><span style="font-size:20px;font-weight:600">Read The Rouz Weekly</span><span style="font-size:15px;color:#4A5468;line-height:1.55">Health tips, hospital news and research updates.</span></button>
+</div>
+</sc-if>
+
+<sc-if value="{{ p.services }}" hint-placeholder-val="{{ false }}">
+<div style="background:#F7F3EC;padding:clamp(40px,5.5cqi,80px) clamp(20px,8.3cqi,120px)">
+<div style="font-size:14px;color:#4A5468;display:flex;gap:8px"><button onClick="{{ go.home }}" style="background:none;border:0;padding:0;color:#B1232F;cursor:pointer;font-size:14px">Home</button>/<span>Services</span></div>
+<h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(32px,3.6cqi,52px);line-height:1.1;margin:16px 0 16px">Departments and services</h1>
+<p style="font-size:17px;line-height:1.6;color:#4A5468;max-width:640px;margin:0">Tests, scans and medicines happen in the same building as your consultation, so you are not sent elsewhere to start again.</p>
+</div>
+<div style="padding:clamp(40px,5cqi,72px) clamp(20px,8.3cqi,120px) clamp(48px,6.5cqi,96px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px">
+<sc-for list="{{ depts }}" as="d" hint-placeholder-count="8">
+<div style="border:1px solid #E6E0D4;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;background:{{ d.bg }}">
+<img src="{{ d.img }}" alt="{{ d.name }}" style="width:100%;height:180px;object-fit:cover"></img>
+<div style="padding:22px;display:flex;flex-direction:column;gap:8px;flex:1">
+<div style="display:flex;gap:10px;align-items:center"><i class="{{ d.iconCls }}" style="font-size:24px;color:{{ d.ic }}"></i><span style="font-size:20px;font-weight:600">{{ d.name }}</span></div>
+<span style="font-size:15px;line-height:1.55;color:#4A5468">{{ d.desc }}</span>
+<div style="display:flex;gap:10px;margin-top:auto;padding-top:14px;flex-wrap:wrap">
+<button onClick="{{ d.open }}" style="background:none;border:1.5px solid #1F4FB4;color:#1F4FB4;font-weight:600;font-size:14px;height:44px;padding:0 16px;border-radius:6px;cursor:pointer">Details</button>
+<button onClick="{{ d.book }}" style="background:{{ d.btn }};color:#fff;font-weight:600;font-size:14px;height:44px;padding:0 16px;border-radius:6px;border:0;cursor:pointer">Book this clinic</button>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ p.dept }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));background:#F7F3EC">
+<div style="padding:clamp(40px,5.5cqi,88px) clamp(20px,5cqi,64px) clamp(40px,5.5cqi,88px) clamp(20px,8.3cqi,120px)">
+<div style="font-size:14px;color:#4A5468;display:flex;gap:8px;flex-wrap:wrap"><button onClick="{{ go.home }}" style="background:none;border:0;padding:0;color:#B1232F;cursor:pointer;font-size:14px">Home</button>/<button onClick="{{ go.services }}" style="background:none;border:0;padding:0;color:#B1232F;cursor:pointer;font-size:14px">Services</button>/<span>{{ dept.name }}</span></div>
+<div style="display:flex;gap:12px;align-items:center;margin:22px 0 0"><i class="{{ dept.iconCls }}" style="font-size:34px;color:#B1232F"></i></div>
+<h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(32px,3.6cqi,52px);line-height:1.1;margin:12px 0 16px">{{ dept.name }}</h1>
+<p style="font-size:17px;line-height:1.6;color:#4A5468;margin:0 0 28px;max-width:520px">{{ dept.desc }}</p>
+<div style="display:flex;gap:12px;flex-wrap:wrap"><button onClick="{{ dept.book }}" style="background:#B1232F;color:#fff;font-weight:600;font-size:16px;height:52px;padding:0 22px;border-radius:6px;border:0;cursor:pointer">Book this clinic</button><button onClick="{{ simWa }}" style="background:none;border:1.5px solid #1F4FB4;color:#1F4FB4;font-weight:600;font-size:16px;height:52px;padding:0 22px;border-radius:6px;cursor:pointer">Ask a question</button></div>
+</div>
+<img src="{{ dept.img }}" alt="{{ dept.name }}" style="width:100%;height:100%;min-height:300px;object-fit:cover"></img>
+</div>
+<div style="padding:clamp(48px,6cqi,88px) clamp(20px,8.3cqi,120px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:clamp(32px,5cqi,72px)">
+<div>
+<h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(26px,2.4cqi,34px);margin:0 0 20px">What this department covers</h2>
+<div style="display:flex;flex-direction:column">
+<sc-for list="{{ dept.items }}" as="it" hint-placeholder-count="3"><div style="display:flex;gap:12px;align-items:center;padding:16px 0;border-top:1px solid #E6E0D4;font-size:17px"><i class="ph ph-check-circle" style="color:#B1232F;font-size:22px"></i>{{ it }}</div></sc-for>
+</div>
+</div>
+<div>
+<h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(26px,2.4cqi,34px);margin:0 0 20px">Doctors in this clinic</h2>
+<div style="display:flex;flex-direction:column;gap:12px">
+<sc-for list="{{ deptDocs }}" as="dd" hint-placeholder-count="1">
+<div style="display:flex;gap:16px;align-items:center;background:#F7F3EC;border-radius:10px;padding:14px"><div style="width:64px;height:64px;border-radius:50%;flex:none;background:repeating-linear-gradient(135deg,#E6DDCC 0 6px,#F1EBE0 6px 12px)"></div><div style="flex:1"><div style="font-weight:600;font-size:17px">{{ dd.name }}</div><div style="font-size:14px;color:#4A5468;margin-top:2px">{{ dd.role }} · {{ dd.daysLabel }}</div></div></div>
+</sc-for>
+<sc-if value="{{ noDeptDocs }}" hint-placeholder-val="{{ false }}"><p style="font-size:15px;color:#4A5468;margin:0">Doctor list to be added.</p></sc-if>
+<button onClick="{{ go.doctors }}" style="align-self:flex-start;background:none;border:0;padding:6px 0;color:#B1232F;font-weight:600;font-size:15px;cursor:pointer">All doctors and clinic days →</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ p.maternity }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));background:#1F4FB4;color:#fff">
+<div style="padding:clamp(40px,6cqi,96px) clamp(20px,5cqi,64px) clamp(40px,6cqi,96px) clamp(20px,8.3cqi,120px)">
+<div style="font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#F1D9A0">Maternity</div>
+<h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(32px,3.6cqi,52px);line-height:1.1;margin:16px 0 18px">From your booking visit to your baby's first weeks.</h1>
+<p style="font-size:17px;line-height:1.6;color:#C9CEDA;margin:0 0 30px">Antenatal clinic, labour and delivery, postnatal care and a Special Care Baby Unit, all on one site under one record.</p>
+<div style="display:flex;gap:12px;flex-wrap:wrap"><button onClick="{{ bookMaternity }}" style="background:#B1232F;color:#fff;font-weight:600;font-size:16px;height:52px;padding:0 22px;border-radius:6px;border:0;cursor:pointer">Start antenatal care</button><button onClick="{{ simCall }}" style="background:transparent;border:1.5px solid #fff;color:#fff;font-weight:600;font-size:16px;height:52px;padding:0 22px;border-radius:6px;cursor:pointer">Call the delivery suite</button></div>
+</div>
+<img src="assets/scbu.jpg" alt="Special Care Baby Unit" style="width:100%;height:100%;min-height:300px;object-fit:cover"></img>
+</div>
+<div style="padding:clamp(48px,6.5cqi,96px) clamp(20px,8.3cqi,120px)">
+<div style="font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#B1232F">Your pregnancy at Rouz</div>
+<h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(28px,2.8cqi,40px);line-height:1.15;margin:14px 0 32px">Four stages, one team.</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:0 24px">
+<sc-for list="{{ matSteps }}" as="s" hint-placeholder-count="4"><div style="border-top:3px solid #B1232F;padding:22px 0"><div style="font-family:'Young Serif',serif;font-size:26px;color:#B1232F">{{ s.n }}</div><div style="font-size:19px;font-weight:600;margin:10px 0 8px">{{ s.t }}</div><div style="font-size:15px;line-height:1.6;color:#4A5468">{{ s.d }}</div></div></sc-for>
+</div>
+</div>
+<div style="background:#F7F3EC;padding:clamp(48px,6.5cqi,96px) clamp(20px,8.3cqi,120px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:clamp(32px,5cqi,72px)">
+<div>
+<div style="font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#B1232F">Special Care Baby Unit</div>
+<h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(28px,2.8cqi,40px);line-height:1.15;margin:14px 0 18px">Close observation for newborns who need it.</h2>
+<p style="font-size:16px;line-height:1.65;color:#4A5468;margin:0 0 22px">A dedicated room next to the maternity service, equipped for babies who need monitoring after birth.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;font-size:15px">
+<span style="display:flex;gap:10px;align-items:center"><i class="ph ph-check-circle" style="color:#B1232F;font-size:20px"></i>Infant incubators</span><span style="display:flex;gap:10px;align-items:center"><i class="ph ph-check-circle" style="color:#B1232F;font-size:20px"></i>Patient monitors</span><span style="display:flex;gap:10px;align-items:center"><i class="ph ph-check-circle" style="color:#B1232F;font-size:20px"></i>Neonatal cots</span><span style="display:flex;gap:10px;align-items:center"><i class="ph ph-check-circle" style="color:#B1232F;font-size:20px"></i>Infusion support</span>
+</div>
+</div>
+<div style="background:#fff;border-radius:12px;padding:clamp(22px,3cqi,36px)">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px"><h3 style="font-size:21px;font-weight:600;margin:0">What to bring for delivery</h3><span style="font-size:14px;color:#4A5468">{{ bagCount }}</span></div>
+<p style="font-size:13px;color:#4A5468;margin:6px 0 14px">Draft list, to confirm with the midwives. Ticks are saved on this device.</p>
+<sc-for list="{{ bag }}" as="b" hint-placeholder-count="6">
+<button onClick="{{ b.toggle }}" style="width:100%;display:flex;gap:14px;align-items:center;min-height:52px;background:none;border:0;border-top:1px solid #EFE9DE;text-align:left;cursor:pointer;font-size:16px;color:{{ b.fg }};text-decoration:{{ b.td }}"><span style="width:24px;height:24px;flex:none;border-radius:5px;border:1.5px solid {{ b.bd }};background:{{ b.bg }};color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px"><i class="{{ b.icon }}"></i></span>{{ b.t }}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ p.elmaor }}" hint-placeholder-val="{{ false }}">
+<div style="background:#F3EDF7;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))">
+<div style="padding:clamp(40px,6cqi,96px) clamp(20px,5cqi,64px) clamp(40px,6cqi,96px) clamp(20px,8.3cqi,120px)">
+<img src="assets/logos/elmaor-endorsed-color.png" alt="Elmaor Fertility Clinic, a Rouz Hospital and Maternity service" style="height:64px;width:auto;display:block;margin:0 0 28px -6px"></img>
+<h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(32px,3.6cqi,52px);line-height:1.1;margin:0 0 18px">Hope, honest information and support.</h1>
+<p style="font-size:17px;line-height:1.6;color:#4A5468;margin:0 0 30px;max-width:520px">We'll explain each step of assessment and treatment, what it costs, and what the results mean, before you decide anything.</p>
+<div style="display:flex;gap:12px;flex-wrap:wrap"><button onClick="{{ bookElmaor }}" style="background:#5A2A82;color:#fff;font-weight:600;font-size:16px;height:52px;padding:0 22px;border-radius:6px;border:0;cursor:pointer" style-hover="background:#46206A">Book a consultation</button><button onClick="{{ simWa }}" style="background:none;border:1.5px solid #1F4FB4;color:#1F4FB4;font-weight:600;font-size:16px;height:52px;padding:0 22px;border-radius:6px;cursor:pointer">Ask privately on WhatsApp</button></div>
+</div>
+<img src="assets/elmaor-room.jpg" alt="Elmaor consulting room" style="width:100%;height:100%;object-fit:cover;min-height:320px"></img>
+</div>
+<div style="padding:clamp(48px,6.5cqi,96px) clamp(20px,8.3cqi,120px)">
+<h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(28px,2.8cqi,40px);line-height:1.15;margin:0 0 32px;max-width:720px">From the first consultation to your baby's first years, one team.</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:0 24px">
+<sc-for list="{{ elmSteps }}" as="s" hint-placeholder-count="4"><div style="border-top:3px solid #5A2A82;padding:22px 0"><div style="font-family:'Young Serif',serif;font-size:26px;color:#5A2A82">{{ s.n }}</div><div style="font-size:19px;font-weight:600;margin:10px 0 8px">{{ s.t }}</div><div style="font-size:15px;line-height:1.6;color:#4A5468">{{ s.d }}</div></div></sc-for>
+</div>
+</div>
+<div style="padding:0 clamp(20px,8.3cqi,120px) clamp(48px,6.5cqi,96px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px">
+<div style="background:#F3EDF7;border-radius:12px;padding:28px"><i class="ph ph-clipboard-text" style="font-size:30px;color:#5A2A82"></i><h3 style="font-size:21px;font-weight:600;margin:14px 0 8px">Fertility assessment</h3><p style="font-size:15px;line-height:1.6;color:#4A5468;margin:0">Tests for both partners, done in our on-site laboratory and radiology unit.</p></div>
+<div style="background:#F3EDF7;border-radius:12px;padding:28px"><i class="ph ph-flask" style="font-size:30px;color:#5A2A82"></i><h3 style="font-size:21px;font-weight:600;margin:14px 0 8px">IVF consultation and cycles</h3><p style="font-size:15px;line-height:1.6;color:#4A5468;margin:0">Consultation and treatment cycles, with the process and costs set out in writing.</p></div>
+<div style="background:#F3EDF7;border-radius:12px;padding:28px"><i class="ph ph-chalkboard-teacher" style="font-size:30px;color:#5A2A82"></i><h3 style="font-size:21px;font-weight:600;margin:14px 0 8px">Fertility Awareness programme</h3><p style="font-size:15px;line-height:1.6;color:#4A5468;margin:0">Patient education sessions on fertility, timing and treatment options.</p></div>
+</div>
+<div style="background:#5A2A82;color:#fff;padding:clamp(40px,5cqi,72px) clamp(20px,8.3cqi,120px);display:flex;justify-content:space-between;align-items:center;gap:28px;flex-wrap:wrap">
+<div><h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(26px,2.5cqi,36px);margin:0 0 10px">Talk to us privately.</h2><p style="font-size:16px;color:#E7DDF0;margin:0">Your enquiry stays confidential.</p></div>
+<button onClick="{{ bookElmaor }}" style="background:#fff;color:#5A2A82;font-weight:600;font-size:16px;height:52px;padding:0 22px;border-radius:6px;border:0;cursor:pointer">Book a consultation</button>
+</div>
+</sc-if>
+
+<sc-if value="{{ p.doctors }}" hint-placeholder-val="{{ false }}">
+<div style="background:#F7F3EC;padding:clamp(40px,5.5cqi,80px) clamp(20px,8.3cqi,120px) 32px">
+<div style="font-size:14px;color:#4A5468;display:flex;gap:8px"><button onClick="{{ go.home }}" style="background:none;border:0;padding:0;color:#B1232F;cursor:pointer;font-size:14px">Home</button>/<span>Doctors</span></div>
+<h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(32px,3.6cqi,52px);line-height:1.1;margin:16px 0 28px">Who you will see, and when.</h1>
+<div style="font-size:13px;font-weight:600;color:#4A5468;margin-bottom:10px">Department</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px">
+<sc-for list="{{ docDeptChips }}" as="c" hint-placeholder-count="9"><button onClick="{{ c.onClick }}" style="height:44px;padding:0 16px;border-radius:999px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for>
+</div>
+<div style="font-size:13px;font-weight:600;color:#4A5468;margin-bottom:10px">Clinic day</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{ docDayChips }}" as="c" hint-placeholder-count="7"><button onClick="{{ c.onClick }}" style="height:44px;min-width:56px;padding:0 14px;border-radius:999px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for>
+</div>
+</div>
+<div style="padding:28px clamp(20px,8.3cqi,120px) clamp(48px,6.5cqi,96px)">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:12px"><span style="font-size:15px;color:#4A5468">{{ docCount }}</span><span style="font-size:12px;color:#7A7468;font-family:ui-monospace,Menlo,monospace">placeholder doctors</span></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:16px">
+<sc-for list="{{ docs }}" as="d" hint-placeholder-count="4">
+<div style="border:1px solid #E6E0D4;border-radius:12px;overflow:hidden;display:flex;flex-direction:column">
+<div style="height:200px;background:repeating-linear-gradient(135deg,#EFE8DB 0 10px,#F7F3EC 10px 20px);display:flex;align-items:center;justify-content:center;font:12px ui-monospace,Menlo,monospace;color:#7A7468">doctor portrait</div>
+<div style="padding:18px 20px 20px;display:flex;flex-direction:column;gap:4px;flex:1"><div style="font-size:18px;font-weight:600">{{ d.name }}</div><div style="font-size:15px;color:{{ d.roleColor }};font-weight:500">{{ d.role }}</div><div style="font-size:14px;color:#4A5468;margin-top:8px;display:flex;gap:8px;align-items:center"><i class="ph ph-calendar-blank"></i>{{ d.daysLabel }}</div>
+<button onClick="{{ d.book }}" style="margin-top:14px;height:44px;border-radius:6px;border:1.5px solid #1F4FB4;background:#fff;color:#1F4FB4;font-weight:600;font-size:14px;cursor:pointer" style-hover="background:#1F4FB4;color:#fff">Book this clinic</button></div>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{ noDocs }}" hint-placeholder-val="{{ false }}">
+<div style="text-align:center;padding:48px 20px;background:#F7F3EC;border-radius:12px"><div style="font-size:18px;font-weight:600;margin-bottom:8px">No doctors match those filters.</div><p style="font-size:15px;color:#4A5468;margin:0 0 18px">Try another day, or ask us who is available.</p><button onClick="{{ clearDocFilters }}" style="height:48px;padding:0 20px;border-radius:6px;border:0;background:#B1232F;color:#fff;font-weight:600;font-size:15px;cursor:pointer">Clear filters</button></div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ p.news }}" hint-placeholder-val="{{ false }}">
+<div style="background:#F7F3EC;padding:clamp(40px,5.5cqi,80px) clamp(20px,8.3cqi,120px)">
+<div style="font-size:14px;color:#4A5468;display:flex;gap:8px"><button onClick="{{ go.home }}" style="background:none;border:0;padding:0;color:#B1232F;cursor:pointer;font-size:14px">Home</button>/<span>Research &amp; News</span></div>
+<h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(32px,3.6cqi,52px);line-height:1.1;margin:16px 0 16px">Research &amp; News</h1>
+<p style="font-size:17px;line-height:1.6;color:#4A5468;max-width:640px;margin:0">The Rouz Weekly, and work from the Rouz Research &amp; Publications unit.</p>
+</div>
+<div style="padding:clamp(40px,5cqi,72px) clamp(20px,8.3cqi,120px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:clamp(32px,5cqi,64px)">
+<div>
+<h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(26px,2.4cqi,34px);margin:0 0 20px">The Rouz Weekly</h2>
+<div style="display:flex;flex-direction:column">
+<sc-for list="{{ issues }}" as="is" hint-placeholder-count="4">
+<button style="display:grid;grid-template-columns:96px 1fr;gap:18px;padding:18px 0;border:0;border-top:1px solid #E6E0D4;background:none;text-align:left;cursor:pointer;color:#1F4FB4" style-hover="background:#FBF9F5"><div style="height:120px;border-radius:6px;background:repeating-linear-gradient(135deg,#EFE8DB 0 8px,#F7F3EC 8px 16px)"></div><div><div style="font-size:13px;color:#4A5468">Issue {{ is.n }} · date</div><div style="font-size:18px;font-weight:600;margin:6px 0 6px">Issue headline goes here</div><div style="font-size:14px;color:#4A5468;line-height:1.5">Health tips, hospital news and updates.</div></div></button>
+</sc-for>
+</div>
+</div>
+<div>
+<h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(26px,2.4cqi,34px);margin:0 0 12px">Rouz Research &amp; Publications</h2>
+<p style="font-size:16px;line-height:1.6;color:#4A5468;margin:0 0 20px">An in-house unit turning clinical work into published research and patient education, with written patient consent and ethics review before any study begins.</p>
+<sc-for list="{{ topics }}" as="t" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;padding:16px 0;border-top:1px solid #E6E0D4;font-size:16px;font-weight:500">{{ t }}<span style="color:#B1232F">→</span></div></sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ p.hmos }}" hint-placeholder-val="{{ false }}">
+<div style="background:#F7F3EC;padding:clamp(40px,5.5cqi,80px) clamp(20px,8.3cqi,120px)">
+<div style="font-size:14px;color:#4A5468;display:flex;gap:8px"><button onClick="{{ go.home }}" style="background:none;border:0;padding:0;color:#B1232F;cursor:pointer;font-size:14px">Home</button>/<span>HMOs</span></div>
+<h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(32px,3.6cqi,52px);line-height:1.1;margin:16px 0 16px">Check your HMO cover</h1>
+<p style="font-size:17px;line-height:1.6;color:#4A5468;max-width:640px;margin:0">Choose your HMO and the service you need. Plans differ, so we always confirm before treatment.</p>
+</div>
+<div style="padding:clamp(40px,5cqi,72px) clamp(20px,8.3cqi,120px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:clamp(32px,5cqi,64px);align-items:start">
+<div style="border:1px solid #E6E0D4;border-radius:12px;padding:clamp(22px,3cqi,36px)">
+<label style="display:block;font-size:14px;font-weight:600;margin-bottom:8px">Your HMO</label>
+<select value="{{ hmoSel }}" onChange="{{ setHmo }}" style="width:100%;height:52px;border:1px solid #D8D0C2;border-radius:6px;padding:0 12px;font-size:16px;background:#fff;color:#1F4FB4;margin-bottom:18px"><option value="">Choose an HMO</option><sc-for list="{{ hmoList }}" as="h" hint-placeholder-count="6"><option value="{{ h }}">{{ h }}</option></sc-for></select>
+<label style="display:block;font-size:14px;font-weight:600;margin-bottom:8px">Service</label>
+<select value="{{ svcSel }}" onChange="{{ setSvc }}" style="width:100%;height:52px;border:1px solid #D8D0C2;border-radius:6px;padding:0 12px;font-size:16px;background:#fff;color:#1F4FB4;margin-bottom:22px"><option value="">Choose a service</option><sc-for list="{{ depts }}" as="d" hint-placeholder-count="8"><option value="{{ d.id }}">{{ d.name }}</option></sc-for></select>
+<button onClick="{{ runCheck }}" style="width:100%;height:52px;border-radius:6px;border:0;background:{{ checkBg }};color:#fff;font-weight:600;font-size:16px;cursor:pointer">Check cover</button>
+<sc-if value="{{ hasRes }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:20px;border-radius:10px;padding:20px;background:{{ res.bg }};color:{{ res.fg }}"><div style="font-size:18px;font-weight:700;display:flex;gap:10px;align-items:center"><i class="{{ res.icon }}" style="font-size:22px"></i>{{ res.t }}</div><p style="font-size:15px;line-height:1.55;margin:8px 0 14px;color:#1F4FB4">{{ res.b }}</p><div style="display:flex;gap:10px;flex-wrap:wrap"><button onClick="{{ res.book }}" style="height:44px;padding:0 16px;border-radius:6px;border:0;background:#B1232F;color:#fff;font-weight:600;font-size:14px;cursor:pointer">Book this clinic</button><button onClick="{{ simWa }}" style="height:44px;padding:0 16px;border-radius:6px;border:1.5px solid #1F4FB4;background:#fff;color:#1F4FB4;font-weight:600;font-size:14px;cursor:pointer">Confirm on WhatsApp</button></div></div>
+</sc-if>
+<p style="font-size:12px;color:#7A7468;margin:16px 0 0;font-family:ui-monospace,Menlo,monospace">Sample data. Final HMO list and rules from Rouz billing.</p>
+</div>
+<div>
+<h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(24px,2.2cqi,30px);margin:0 0 18px">HMOs we work with</h2>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px"><sc-for list="{{ hmoList }}" as="h" hint-placeholder-count="6"><div style="height:72px;border:1px solid #E6E0D4;border-radius:8px;display:flex;align-items:center;justify-content:center;font:12px ui-monospace,Menlo,monospace;color:#7A7468">{{ h }} logo</div></sc-for></div>
+<div style="margin-top:24px;background:#F7F3EC;border-radius:10px;padding:20px;font-size:15px;line-height:1.6">Not listed? <button onClick="{{ simWa }}" style="background:none;border:0;padding:0;color:#B1232F;font-weight:600;cursor:pointer;font-size:15px">Send us a photo of your HMO card</button> and we will check for you.</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ p.about }}" hint-placeholder-val="{{ false }}">
+<div style="background:#F7F3EC;padding:clamp(40px,5.5cqi,80px) clamp(20px,8.3cqi,120px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:clamp(32px,5cqi,72px);align-items:center">
+<div>
+<div style="font-size:14px;color:#4A5468;display:flex;gap:8px"><button onClick="{{ go.home }}" style="background:none;border:0;padding:0;color:#B1232F;cursor:pointer;font-size:14px">Home</button>/<span>About</span></div>
+<h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(32px,3.6cqi,52px);line-height:1.1;margin:16px 0 18px">A family hospital with a maternity and fertility focus.</h1>
+<p style="font-size:17px;line-height:1.65;color:#4A5468;margin:0 0 14px">Rouz Hospital and Maternity Limited is a private hospital in Apo Quarters, Gudu District, Abuja. It provides general hospital care alongside maternity services, and runs Elmaor Fertility Clinic as its specialist fertility and IVF unit.</p>
+<p style="font-size:17px;line-height:1.65;color:#4A5468;margin:0">Antenatal care, delivery, postnatal follow-up, paediatrics and fertility treatment all take place on one site, under one management.</p>
+</div>
+<img src="assets/entrance.jpg" alt="Covered entrance" style="width:100%;height:clamp(260px,30cqi,440px);object-fit:cover;border-radius:12px"></img>
+</div>
+<div style="padding:clamp(40px,5cqi,72px) clamp(20px,8.3cqi,120px)">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:20px;border-top:1px solid #DDD3C2;padding-top:24px">
+<sc-for list="{{ stats }}" as="st" hint-placeholder-count="4"><div><div style="font-family:'Young Serif',serif;font-size:clamp(32px,3cqi,44px)">{{ st.v }}</div><div style="font-size:15px;color:#4A5468;margin-top:4px">{{ st.l }}</div></div></sc-for>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px;margin-top:clamp(40px,5cqi,64px)">
+<img src="assets/courtyard.jpg" alt="Courtyard" style="width:100%;height:220px;object-fit:cover;border-radius:10px"></img><img src="assets/corridor.jpg" alt="Corridor" style="width:100%;height:220px;object-fit:cover;border-radius:10px"></img><img src="assets/side-access.jpg" alt="Side access and parking" style="width:100%;height:220px;object-fit:cover;border-radius:10px"></img>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ p.contact }}" hint-placeholder-val="{{ false }}">
+<div style="background:#F7F3EC;padding:clamp(40px,5.5cqi,80px) clamp(20px,8.3cqi,120px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:clamp(32px,5cqi,64px)">
+<div>
+<div style="font-size:14px;color:#4A5468;display:flex;gap:8px"><button onClick="{{ go.home }}" style="background:none;border:0;padding:0;color:#B1232F;cursor:pointer;font-size:14px">Home</button>/<span>Visit</span></div>
+<h1 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(32px,3.6cqi,52px);line-height:1.1;margin:16px 0 28px">Come in, or call first.</h1>
+<div style="display:grid;grid-template-columns:minmax(0,120px) minmax(0,1fr);row-gap:16px;column-gap:16px;font-size:16px;line-height:1.55">
+<span style="color:#4A5468">Address</span><span>10 Mobolaji Johnson Str., Apo Quarters Zone D, 2nd Gate, Gudu District, P.O. Box 3115, Garki–Abuja</span>
+<span style="color:#4A5468">Phone</span><span>0704 473 6867 · 0909 865 5547</span>
+<span style="color:#4A5468">Email</span><span>rouzhmltd@yahoo.com</span>
+<span style="color:#4A5468">Clinic hours</span><span style="color:#B1232F">To confirm with the hospital</span>
+<span style="color:#4A5468">On site</span><span>Parking inside a walled, gated perimeter</span>
+</div>
+</div>
+<div style="border-radius:12px;min-height:340px;background:repeating-linear-gradient(135deg,#E9E1D2 0 10px,#F1EBE0 10px 20px);display:flex;align-items:center;justify-content:center;font:12px ui-monospace,Menlo,monospace;color:#7A7468">Google map embed</div>
+</div>
+<div style="padding:clamp(48px,6cqi,88px) clamp(20px,8.3cqi,120px)">
+<h2 style="font-family:'Young Serif',serif;font-weight:400;font-size:clamp(26px,2.3cqi,32px);margin:0 0 24px">Three ways to reach us.</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px">
+<button onClick="{{ openBookAny }}" style="border:1px solid #E6E0D4;background:#fff;border-radius:10px;padding:26px;text-align:left;cursor:pointer;color:#1F4FB4;display:flex;flex-direction:column;gap:8px" style-hover="border-color:#1F4FB4"><span style="font-size:20px;font-weight:600">Book an appointment</span><span style="font-size:15px;line-height:1.55;color:#4A5468">Choose a clinic and a preferred day. We call back to confirm.</span><span style="font-weight:600;color:#B1232F;margin-top:6px">Open the form →</span></button>
+<button onClick="{{ simCall }}" style="border:1px solid #E6E0D4;background:#fff;border-radius:10px;padding:26px;text-align:left;cursor:pointer;color:#1F4FB4;display:flex;flex-direction:column;gap:8px" style-hover="border-color:#1F4FB4"><span style="font-size:20px;font-weight:600">Call us</span><span style="font-size:15px;line-height:1.55;color:#4A5468">Speak to reception or the delivery suite.</span><span style="font-weight:600;color:#B1232F;margin-top:6px">0704 473 6867</span></button>
+<button onClick="{{ simWa }}" style="border:1px solid #E6E0D4;background:#fff;border-radius:10px;padding:26px;text-align:left;cursor:pointer;color:#1F4FB4;display:flex;flex-direction:column;gap:8px" style-hover="border-color:#1F4FB4"><span style="font-size:20px;font-weight:600">WhatsApp</span><span style="font-size:15px;line-height:1.55;color:#4A5468">Send a question or a photo of a referral letter.</span><span style="font-weight:600;color:#B1232F;margin-top:6px">Start a chat →</span></button>
+</div>
+</div>
+</sc-if>
+
+<div style="padding:0 clamp(20px,8.3cqi,120px) 40px"><p style="margin:0;padding:18px 20px;border-radius:10px;background:#FBEDEE;font-size:15px;line-height:1.5;color:#1F4FB4;display:flex;gap:12px;align-items:flex-start"><i class="ph ph-warning-circle" style="color:#B1232F;font-size:22px;flex:none"></i>If you are bleeding heavily, have severe pain or your waters have broken, do not message or book. Call us or come straight in.</p></div>
+
+<footer style="background:#1F4FB4;color:#C9CEDA;padding:clamp(40px,5cqi,72px) clamp(20px,8.3cqi,120px) {{ footBottom }}">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:36px">
+<div><img src="assets/logos/rouz-horizontal-reverse.png" alt="Rouz Hospital and Maternity" style="height:44px;width:auto;display:block"></img><p style="font-size:15px;line-height:1.6;margin:18px 0 0;max-width:300px">A family hospital in Apo, Abuja, with maternity and fertility care at its centre.</p></div>
+<div style="display:flex;flex-direction:column;gap:10px;font-size:15px;align-items:flex-start"><span style="color:#fff;font-weight:600;margin-bottom:4px">Care</span><sc-for list="{{ footCare }}" as="f" hint-placeholder-count="4"><button onClick="{{ f.onClick }}" style="background:none;border:0;padding:0;color:#C9CEDA;cursor:pointer;font-size:15px;text-align:left" style-hover="color:#fff">{{ f.label }}</button></sc-for></div>
+<div style="display:flex;flex-direction:column;gap:10px;font-size:15px;align-items:flex-start"><span style="color:#fff;font-weight:600;margin-bottom:4px">Hospital</span><sc-for list="{{ footHosp }}" as="f" hint-placeholder-count="5"><button onClick="{{ f.onClick }}" style="background:none;border:0;padding:0;color:#C9CEDA;cursor:pointer;font-size:15px;text-align:left" style-hover="color:#fff">{{ f.label }}</button></sc-for></div>
+<div style="display:flex;flex-direction:column;gap:10px;font-size:15px"><span style="color:#fff;font-weight:600;margin-bottom:4px">Visit</span><span>10 Mobolaji Johnson Str., Apo Quarters, Abuja</span><span>0704 473 6867</span><span>rouzhmltd@yahoo.com</span><div style="display:flex;gap:14px;font-size:22px;color:#fff;margin-top:6px"><i class="ph ph-facebook-logo"></i><i class="ph ph-instagram-logo"></i><i class="ph ph-linkedin-logo"></i><i class="ph ph-x-logo"></i></div></div>
+</div>
+<div style="border-top:1px solid rgba(255,255,255,.14);margin-top:44px;padding-top:20px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px"><span>© 2026 Rouz Hospital and Maternity Limited</span><span>Privacy notice · Nigeria Data Protection Act</span></div>
+</footer>
+
+<sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+<div style="position:sticky;bottom:0;z-index:15;background:#fff;border-top:1px solid #E6E0D4;padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<button onClick="{{ openBookAny }}" style="height:50px;border-radius:6px;background:#B1232F;color:#fff;font-weight:600;border:0;font-size:15px;cursor:pointer">Book</button>
+<button onClick="{{ simWa }}" style="height:50px;border-radius:6px;background:#25D366;color:#fff;font-weight:600;border:0;display:flex;align-items:center;justify-content:center;gap:6px;font-size:15px;cursor:pointer"><i class="ph ph-whatsapp-logo" style="font-size:20px"></i>WhatsApp</button>
+</div>
+</sc-if>
+</div>
+
+<sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ simWa }}" aria-label="WhatsApp" style="position:absolute;right:28px;bottom:28px;z-index:30;width:60px;height:60px;border-radius:50%;background:#25D366;color:#fff;border:0;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 6px 20px rgba(31, 79, 180,.25);cursor:pointer"><i class="ph ph-whatsapp-logo"></i></button>
+</sc-if>
+
+<sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:40;background:#fff;display:flex;flex-direction:column">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-bottom:1px solid #ECE6DA"><img src="assets/logos/rouz-horizontal-color.png" alt="Rouz" style="height:36px;width:auto"></img><button onClick="{{ toggleMenu }}" aria-label="Close menu" style="width:48px;height:48px;border-radius:6px;border:1px solid #E6E0D4;background:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#1F4FB4"><i class="ph ph-x"></i></button></div>
+<div style="flex:1;overflow-y:auto;padding:8px 20px">
+<sc-for list="{{ menuItems }}" as="n" hint-placeholder-count="9"><button onClick="{{ n.onClick }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;min-height:56px;border:0;border-bottom:1px solid #EFE9DE;background:none;font-size:18px;font-weight:500;color:{{ n.color }};cursor:pointer;text-align:left">{{ n.label }}<i class="ph ph-caret-right" style="color:#4A5468"></i></button></sc-for>
+</div>
+<div style="padding:16px 20px 24px;display:flex;flex-direction:column;gap:10px;border-top:1px solid #ECE6DA">
+<button onClick="{{ openBookAny }}" style="height:52px;border-radius:6px;border:0;background:#B1232F;color:#fff;font-weight:600;font-size:16px;cursor:pointer">Book an appointment</button>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button onClick="{{ simCall }}" style="height:50px;border-radius:6px;border:1.5px solid #1F4FB4;background:#fff;color:#1F4FB4;font-weight:600;font-size:15px;cursor:pointer">Call</button><button onClick="{{ simWa }}" style="height:50px;border-radius:6px;border:0;background:#25D366;color:#fff;font-weight:600;font-size:15px;cursor:pointer">WhatsApp</button></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ bookOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:45;background:rgba(14,23,48,.55);display:flex;align-items:center;justify-content:center;padding:{{ ovPad }}">
+<div style="background:#fff;width:100%;max-width:680px;height:{{ mH }};max-height:100%;border-radius:{{ mR }};display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+<div style="padding:18px 24px;border-bottom:1px solid #ECE6DA;display:flex;justify-content:space-between;align-items:center;gap:12px">
+<div><div style="font-family:'Young Serif',serif;font-size:22px">Book an appointment</div><sc-if value="{{ showSteps }}" hint-placeholder-val="{{ true }}"><div style="font-size:13px;color:#4A5468;margin-top:2px">{{ stepLabel }}</div></sc-if></div>
+<button onClick="{{ closeBook }}" aria-label="Close" style="width:44px;height:44px;border-radius:6px;border:1px solid #E6E0D4;background:#fff;font-size:20px;cursor:pointer;color:#1F4FB4;display:flex;align-items:center;justify-content:center"><i class="ph ph-x"></i></button>
+</div>
+<sc-if value="{{ showSteps }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:14px 24px 0"><sc-for list="{{ stepItems }}" as="si" hint-placeholder-count="4"><div><div style="height:4px;border-radius:2px;background:{{ si.bar }}"></div><div style="font-size:12px;margin-top:6px;color:{{ si.fg }};font-weight:600">{{ si.t }}</div></div></sc-for></div>
+</sc-if>
+<div style="flex:1;overflow-y:auto;padding:22px 24px">
+
+<sc-if value="{{ st.s1 }}" hint-placeholder-val="{{ true }}">
+<div style="font-size:15px;font-weight:600;margin-bottom:10px">Which clinic?</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ clinicChips }}" as="c" hint-placeholder-count="8"><button onClick="{{ c.onClick }}" style="min-height:44px;padding:0 14px;border-radius:999px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+<sc-if value="{{ err.clinic }}"><div style="color:#B1232F;font-size:13px;margin-top:8px">{{ err.clinic }}</div></sc-if>
+<div style="font-size:15px;font-weight:600;margin:22px 0 10px">Have you been to Rouz before?</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ patientChips }}" as="c" hint-placeholder-count="2"><button onClick="{{ c.onClick }}" style="min-height:44px;padding:0 16px;border-radius:999px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+<div style="font-size:15px;font-weight:600;margin:22px 0 10px">Preferred day</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ dayChips }}" as="c" hint-placeholder-count="6"><button onClick="{{ c.onClick }}" style="min-height:44px;padding:0 14px;border-radius:8px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+<sc-if value="{{ err.day }}"><div style="color:#B1232F;font-size:13px;margin-top:8px">{{ err.day }}</div></sc-if>
+<div style="font-size:15px;font-weight:600;margin:22px 0 10px">Time of day</div>
+<div style="display:flex;gap:8px"><sc-for list="{{ slotChips }}" as="c" hint-placeholder-count="2"><button onClick="{{ c.onClick }}" style="min-height:44px;padding:0 18px;border-radius:8px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+<sc-if value="{{ err.slot }}"><div style="color:#B1232F;font-size:13px;margin-top:8px">{{ err.slot }}</div></sc-if>
+<p style="font-size:13px;color:#4A5468;margin:18px 0 0">This is a request. Reception calls you to agree an exact time.</p>
+</sc-if>
+
+<sc-if value="{{ st.s2 }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px">
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600">First name<input value="{{ bk.first }}" onChange="{{ on.first }}" autocomplete="given-name" style="height:48px;border:1.5px solid {{ bdr.first }};border-radius:6px;padding:0 14px;font-size:16px;font-weight:400;color:#1F4FB4"></input><sc-if value="{{ err.first }}"><span style="color:#B1232F;font-size:13px;font-weight:400">{{ err.first }}</span></sc-if></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600">Surname<input value="{{ bk.last }}" onChange="{{ on.last }}" autocomplete="family-name" style="height:48px;border:1.5px solid {{ bdr.last }};border-radius:6px;padding:0 14px;font-size:16px;font-weight:400;color:#1F4FB4"></input><sc-if value="{{ err.last }}"><span style="color:#B1232F;font-size:13px;font-weight:400">{{ err.last }}</span></sc-if></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600">Phone number<input value="{{ bk.phone }}" onChange="{{ on.phone }}" type="tel" placeholder="0803 123 4567" autocomplete="tel" style="height:48px;border:1.5px solid {{ bdr.phone }};border-radius:6px;padding:0 14px;font-size:16px;font-weight:400;color:#1F4FB4"></input><sc-if value="{{ err.phone }}"><span style="color:#B1232F;font-size:13px;font-weight:400">{{ err.phone }}</span></sc-if></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600">Email (optional)<input value="{{ bk.email }}" onChange="{{ on.email }}" type="email" autocomplete="email" style="height:48px;border:1.5px solid {{ bdr.email }};border-radius:6px;padding:0 14px;font-size:16px;font-weight:400;color:#1F4FB4"></input><sc-if value="{{ err.email }}"><span style="color:#B1232F;font-size:13px;font-weight:400">{{ err.email }}</span></sc-if></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600">Date of birth<input value="{{ bk.dob }}" onChange="{{ on.dob }}" type="date" style="height:48px;border:1.5px solid {{ bdr.dob }};border-radius:6px;padding:0 14px;font-size:16px;font-weight:400;color:#1F4FB4"></input><sc-if value="{{ err.dob }}"><span style="color:#B1232F;font-size:13px;font-weight:400">{{ err.dob }}</span></sc-if></label>
+</div>
+<p style="font-size:13px;color:#4A5468;margin:18px 0 0">Booking for a child? Enter the child's name and date of birth, and a parent's phone number.</p>
+</sc-if>
+
+<sc-if value="{{ st.s3 }}" hint-placeholder-val="{{ false }}">
+<div style="font-size:15px;font-weight:600;margin-bottom:10px">How will you pay?</div>
+<div style="display:flex;gap:8px"><sc-for list="{{ payChips }}" as="c" hint-placeholder-count="2"><button onClick="{{ c.onClick }}" style="min-height:44px;padding:0 18px;border-radius:8px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:14px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+<sc-if value="{{ err.pay }}"><div style="color:#B1232F;font-size:13px;margin-top:8px">{{ err.pay }}</div></sc-if>
+<sc-if value="{{ payHmo }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px;margin-top:18px">
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600">HMO<select value="{{ bk.hmo }}" onChange="{{ on.hmo }}" style="height:48px;border:1.5px solid {{ bdr.hmo }};border-radius:6px;padding:0 10px;font-size:16px;font-weight:400;background:#fff;color:#1F4FB4"><option value="">Choose</option><sc-for list="{{ hmoList }}" as="h" hint-placeholder-count="6"><option value="{{ h }}">{{ h }}</option></sc-for></select><sc-if value="{{ err.hmo }}"><span style="color:#B1232F;font-size:13px;font-weight:400">{{ err.hmo }}</span></sc-if></label>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600">Enrollee ID<input value="{{ bk.hmoId }}" onChange="{{ on.hmoId }}" style="height:48px;border:1.5px solid {{ bdr.hmoId }};border-radius:6px;padding:0 14px;font-size:16px;font-weight:400;color:#1F4FB4"></input><sc-if value="{{ err.hmoId }}"><span style="color:#B1232F;font-size:13px;font-weight:400">{{ err.hmoId }}</span></sc-if></label>
+</div>
+</sc-if>
+<label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600;margin-top:22px">Reason for your visit<textarea value="{{ bk.reason }}" onChange="{{ on.reason }}" rows="4" placeholder="For example: first antenatal visit, 12 weeks pregnant" style="border:1.5px solid {{ bdr.reason }};border-radius:6px;padding:12px 14px;font-size:16px;font-weight:400;color:#1F4FB4;resize:vertical"></textarea><sc-if value="{{ err.reason }}"><span style="color:#B1232F;font-size:13px;font-weight:400">{{ err.reason }}</span></sc-if></label>
+<label style="display:flex;gap:12px;align-items:flex-start;margin-top:20px;padding:14px;border-radius:8px;background:#FBEDEE;font-size:14px;line-height:1.5;cursor:pointer"><input type="checkbox" checked="{{ bk.notEmerg }}" onChange="{{ on.notEmerg }}" style="width:20px;height:20px;margin:0;accent-color:#B1232F;flex:none"></input><span>This is not an emergency. For heavy bleeding, severe pain or broken waters, I will call or come straight in.</span></label>
+<sc-if value="{{ err.notEmerg }}"><div style="color:#B1232F;font-size:13px;margin-top:8px">{{ err.notEmerg }}</div></sc-if>
+</sc-if>
+
+<sc-if value="{{ st.s4 }}" hint-placeholder-val="{{ false }}">
+<div style="font-size:15px;color:#4A5468;margin-bottom:12px">Check your request before sending.</div>
+<sc-for list="{{ review }}" as="r" hint-placeholder-count="8">
+<div style="display:grid;grid-template-columns:minmax(0,130px) minmax(0,1fr) auto;gap:12px;padding:14px 0;border-top:1px solid #EFE9DE;font-size:15px;align-items:start"><span style="color:#4A5468">{{ r.k }}</span><span style="font-weight:500;overflow-wrap:anywhere">{{ r.v }}</span><button onClick="{{ r.edit }}" style="background:none;border:0;padding:0;color:#B1232F;font-weight:600;font-size:14px;cursor:pointer">Edit</button></div>
+</sc-for>
+</sc-if>
+
+<sc-if value="{{ st.s5 }}" hint-placeholder-val="{{ false }}">
+<div style="text-align:center;padding:24px 4px">
+<div style="width:72px;height:72px;border-radius:50%;background:#E8F1EA;color:#1E5B33;display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 18px"><i class="ph ph-check"></i></div>
+<div style="font-family:'Young Serif',serif;font-size:28px;margin-bottom:10px">Request sent</div>
+<p style="font-size:16px;line-height:1.6;color:#4A5468;margin:0 auto 22px;max-width:420px">{{ confirmText }}</p>
+<div style="display:inline-flex;flex-direction:column;gap:4px;background:#F7F3EC;border-radius:10px;padding:16px 28px"><span style="font-size:13px;color:#4A5468">Your reference</span><span style="font-family:ui-monospace,Menlo,monospace;font-size:22px;font-weight:600;letter-spacing:.06em">{{ bookRef }}</span></div>
+<p style="font-size:13px;color:#4A5468;margin:20px 0 0">Prototype only. Nothing has been sent.</p>
+</div>
+</sc-if>
+</div>
+<div style="padding:16px 24px;border-top:1px solid #ECE6DA;display:flex;justify-content:space-between;gap:12px">
+<sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}"><button onClick="{{ back }}" style="height:50px;padding:0 20px;border-radius:6px;border:1.5px solid #1F4FB4;background:#fff;color:#1F4FB4;font-weight:600;font-size:15px;cursor:pointer">Back</button></sc-if>
+<sc-if value="{{ noBack }}" hint-placeholder-val="{{ true }}"><span></span></sc-if>
+<sc-if value="{{ showSteps }}" hint-placeholder-val="{{ true }}"><button onClick="{{ next }}" style="height:50px;padding:0 24px;border-radius:6px;border:0;background:#B1232F;color:#fff;font-weight:600;font-size:15px;cursor:pointer" style-hover="background:#8A1A24">{{ nextLabel }}</button></sc-if>
+<sc-if value="{{ st.s5 }}" hint-placeholder-val="{{ false }}"><button onClick="{{ closeBook }}" style="height:50px;padding:0 24px;border-radius:6px;border:0;background:#1F4FB4;color:#fff;font-weight:600;font-size:15px;cursor:pointer">Done</button></sc-if>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ simOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeSim }}" style="position:absolute;inset:0;z-index:46;background:rgba(14,23,48,.55);display:flex;align-items:flex-end;justify-content:center;padding:{{ ovPad }}">
+<div onClick="{{ stop }}" style="background:#fff;width:100%;max-width:420px;border-radius:{{ simR }};overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+<sc-if value="{{ simCallOn }}" hint-placeholder-val="{{ false }}">
+<div style="padding:28px 24px;text-align:center">
+<div style="width:64px;height:64px;border-radius:50%;background:#F7F3EC;color:#B1232F;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 14px"><i class="ph ph-phone-call"></i></div>
+<div style="font-size:14px;color:#4A5468">Calling Rouz Hospital</div>
+<div style="font-family:'Young Serif',serif;font-size:30px;margin:6px 0 4px">{{ callNum }}</div>
+<p style="font-size:13px;color:#4A5468;margin:0 0 20px">On a phone this button opens the dialler. Simulated here.</p>
+<div style="display:flex;flex-direction:column;gap:10px">
+<button onClick="{{ swapNum }}" style="height:50px;border-radius:6px;border:1.5px solid #1F4FB4;background:#fff;color:#1F4FB4;font-weight:600;font-size:15px;cursor:pointer">Try {{ altNum }} instead</button>
+<button onClick="{{ closeSim }}" style="height:50px;border-radius:6px;border:0;background:#B1232F;color:#fff;font-weight:600;font-size:15px;cursor:pointer">End call</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ simWaOn }}" hint-placeholder-val="{{ false }}">
+<div style="background:#075E54;color:#fff;padding:14px 18px;display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden"><img src="assets/logos/rouz-horizontal-color.png" alt="" style="height:22px;width:auto;object-fit:cover;object-position:left"></img></div><div style="flex:1"><div style="font-weight:600;font-size:15px">Rouz Hospital</div><div style="font-size:12px;color:#CDE7E3">WhatsApp · simulated</div></div><button onClick="{{ closeSim }}" aria-label="Close" style="background:none;border:0;color:#fff;font-size:22px;cursor:pointer;width:44px;height:44px"><i class="ph ph-x"></i></button></div>
+<div style="background:#ECE5DD;padding:16px;min-height:200px;display:flex;flex-direction:column;gap:10px">
+<div style="align-self:flex-start;background:#fff;border-radius:8px;padding:10px 12px;font-size:14px;line-height:1.45;max-width:85%">Hello, this is Rouz Hospital. How can we help?</div>
+<sc-if value="{{ waSent }}" hint-placeholder-val="{{ false }}">
+<div style="align-self:flex-end;background:#DCF8C6;border-radius:8px;padding:10px 12px;font-size:14px;line-height:1.45;max-width:85%;overflow-wrap:anywhere">{{ waMsg }}</div>
+<div style="align-self:flex-start;background:#fff;border-radius:8px;padding:10px 12px;font-size:14px;line-height:1.45;max-width:85%">Thank you. A member of our team will reply shortly.</div>
+</sc-if>
+<sc-if value="{{ waNotSent }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:auto"><sc-for list="{{ waChips }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.onClick }}" style="min-height:36px;padding:0 12px;border-radius:999px;border:1px solid #075E54;background:#fff;color:#075E54;font-size:13px;font-weight:600;cursor:pointer">{{ c.label }}</button></sc-for></div>
+</sc-if>
+</div>
+<div style="display:flex;gap:8px;padding:10px;background:#F0F0F0">
+<input value="{{ waMsg }}" onChange="{{ setWa }}" placeholder="Type a message" style="flex:1;min-width:0;height:44px;border:0;border-radius:22px;padding:0 16px;font-size:15px"></input>
+<button onClick="{{ sendWa }}" aria-label="Send" style="width:44px;height:44px;border-radius:50%;border:0;background:#075E54;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="ph ph-paper-plane-right"></i></button>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const DEPTS = [
+  { id: 'maternity', name: 'Maternity', icon: 'ph-baby', desc: 'Antenatal clinic, labour and delivery, and postnatal care, from booking to discharge.', items: ['Antenatal clinic', 'Labour and delivery', 'Postnatal care', 'Special Care Baby Unit'], img: 'assets/scbu.jpg', page: 'maternity' },
+  { id: 'elmaor', name: 'Elmaor Fertility Clinic', icon: 'ph-heart', desc: 'Fertility assessment, IVF consultation and treatment cycles, and patient education.', items: [], img: 'assets/elmaor-room.jpg', page: 'elmaor' },
+  { id: 'paeds', name: 'Paediatrics', icon: 'ph-smiley', desc: 'Child health clinics, immunisation and care of newborns and young children.', items: ['Child health clinics', 'Immunisation', 'Care of newborns and young children'], img: 'assets/nurses-station.jpg' },
+  { id: 'gop', name: 'General outpatients', icon: 'ph-stethoscope', desc: 'Family medicine consultations, chronic disease follow-up and specialist clinics.', items: ['Family medicine consultations', 'Chronic disease follow-up', 'Specialist clinics'], img: 'assets/reception.jpg' },
+  { id: 'surgery', name: 'Surgery', icon: 'ph-first-aid-kit', desc: 'General surgery, urology and ENT procedures.', items: ['General surgery', 'Urology', 'ENT procedures'], img: 'assets/corridor.jpg' },
+  { id: 'lab', name: 'Laboratory', icon: 'ph-flask', desc: 'On-site diagnostic laboratory with analysers, centrifuge and sample processing.', items: ['Haematology and chemistry analysers', 'Incubator', 'Centrifuges and sample processing'], img: 'assets/laboratory.jpg' },
+  { id: 'radiology', name: 'Radiology', icon: 'ph-scan', desc: 'Diagnostic imaging, including obstetric ultrasound.', items: ['Diagnostic imaging', 'Obstetric ultrasound'], img: 'assets/side-access.jpg' },
+  { id: 'pharmacy', name: 'Pharmacy', icon: 'ph-pill', desc: 'In-house dispensary with refrigerated storage for vaccines and temperature-sensitive drugs.', items: ['In-house dispensary', 'Refrigerated cold-chain storage for vaccines', 'Temperature-sensitive drugs'], img: 'assets/pharmacy-wide.jpg' }
+];
+const DOCS = [
+  { role: 'Obstetrics & gynaecology', dept: 'maternity', days: ['Mon', 'Wed', 'Fri'] },
+  { role: 'Obstetrics & gynaecology', dept: 'maternity', days: ['Tue', 'Thu', 'Sat'] },
+  { role: 'Paediatrics', dept: 'paeds', days: ['Tue', 'Thu'] },
+  { role: 'Fertility & IVF, Elmaor', dept: 'elmaor', days: ['Mon', 'Thu'] },
+  { role: 'Family medicine', dept: 'gop', days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] },
+  { role: 'General surgery', dept: 'surgery', days: ['Wed', 'Sat'] },
+  { role: 'Radiology & ultrasound', dept: 'radiology', days: ['Mon', 'Wed', 'Fri'] },
+  { role: 'Laboratory medicine', dept: 'lab', days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] }
+];
+const HMOS = ['HMO A', 'HMO B', 'HMO C', 'HMO D', 'HMO E', 'HMO F'];
+const NAV = [
+  { id: 'services', label: 'Services' }, { id: 'maternity', label: 'Maternity' },
+  { id: 'doctors', label: 'Doctors' }, { id: 'news', label: 'Research & News' }, { id: 'hmos', label: 'HMOs' },
+  { id: 'about', label: 'About' }, { id: 'contact', label: 'Visit' }
+];
+const LABELS = { home: 'Home', dept: 'Department', elmaor: 'Elmaor Fertility Clinic' };
+NAV.forEach(n => LABELS[n.id] = n.label);
+const BAG = ['Hospital card, ID and HMO card', 'Antenatal notes and scan reports', 'Nightwear, sanitary pads and toiletries', 'Baby clothes, cap and wrappers', 'Diapers and baby wipes', 'Clothes for going home'];
+const STEPS = ['Clinic & time', 'Your details', 'Payment & reason', 'Review'];
+const NUMS = ['0704 473 6867', '0909 865 5547'];
+const LS = (k, v) => { try { if (v === undefined) return JSON.parse(localStorage.getItem('rouzproto.' + k)); localStorage.setItem('rouzproto.' + k, JSON.stringify(v)); } catch (e) { return null; } };
+const emptyBk = () => ({ clinic: '', patient: 'New patient', day: '', slot: '', first: '', last: '', phone: '', email: '', dob: '', pay: '', hmo: '', hmoId: '', reason: '', notEmerg: false });
+const RED = '#B1232F', PUR = '#5A2A82', NAVY = '#1F4FB4';
+const chip = (sel, accent) => ({ bg: sel ? (accent || NAVY) : '#fff', fg: sel ? '#fff' : NAVY, bd: sel ? (accent || NAVY) : '#D8D0C2' });
+
+class Component extends DCLogic {
+  state = { page: LS('page') || 'home', dept: LS('dept') || 'paeds', device: LS('device') || 'desktop', menu: false, book: null, sim: null, num: 0, waMsg: '', waSent: false, docDept: 'all', docDay: 'Any', hmo: '', svc: '', hmoRes: null, bag: LS('bag') || {} };
+  scrollRef = React.createRef();
+  go = (page, dept) => {
+    const s = { page, menu: false };
+    if (dept) { s.dept = dept; LS('dept', dept); }
+    this.setState(s); LS('page', page);
+    const el = this.scrollRef.current; if (el) el.scrollTop = 0;
+  };
+  openBook = (clinic) => this.setState({ menu: false, sim: null, book: { step: 1, data: { ...emptyBk(), clinic: clinic || '' }, err: {}, ref: null } });
+  setF = (k, v) => this.setState(s => ({ book: { ...s.book, data: { ...s.book.data, [k]: v }, err: { ...s.book.err, [k]: undefined } } }));
+  validate(step, d) {
+    const e = {};
+    if (step === 1) { if (!d.clinic) e.clinic = 'Choose a clinic.'; if (!d.day) e.day = 'Choose a day.'; if (!d.slot) e.slot = 'Choose morning or afternoon.'; }
+    if (step === 2) {
+      if (d.first.trim().length < 2) e.first = 'Enter a first name.';
+      if (d.last.trim().length < 2) e.last = 'Enter a surname.';
+      const p = d.phone.replace(/\D/g, '');
+      if (!/^(0[789][01]\d{8}|234[789][01]\d{8})$/.test(p)) e.phone = 'Enter an 11-digit Nigerian number, e.g. 0803 123 4567.';
+      if (d.email && !/^\S+@\S+\.\S+$/.test(d.email)) e.email = 'Check the email address.';
+      if (!d.dob) e.dob = 'Enter a date of birth.';
+    }
+    if (step === 3) {
+      if (!d.pay) e.pay = 'Choose how you will pay.';
+      if (d.pay === 'HMO') { if (!d.hmo) e.hmo = 'Choose your HMO.'; if (d.hmoId.trim().length < 4) e.hmoId = 'Enter your enrollee ID.'; }
+      if (d.reason.trim().length < 5) e.reason = 'Tell us briefly why you are coming in.';
+      if (!d.notEmerg) e.notEmerg = 'Please confirm this is not an emergency.';
+    }
+    return e;
+  }
+  next = () => {
+    const b = this.state.book; const e = this.validate(b.step, b.data);
+    if (Object.keys(e).length) { this.setState({ book: { ...b, err: e } }); return; }
+    if (b.step === 4) { this.setState({ book: { ...b, step: 5, err: {}, ref: 'RZ-' + Math.floor(10000 + Math.random() * 89999) } }); return; }
+    this.setState({ book: { ...b, step: b.step + 1, err: {} } });
+  };
+  setStep = (n) => this.setState(s => ({ book: { ...s.book, step: n, err: {} } }));
+  componentDidUpdate(pp, ps) { if (ps.device !== this.state.device) { const el = this.scrollRef.current; if (el) el.scrollTop = 0; } }
+
+  renderVals() {
+    const s = this.state, mob = s.device === 'mobile', pg = s.page;
+    const p = {}; ['home', 'services', 'dept', 'maternity', 'elmaor', 'doctors', 'news', 'hmos', 'about', 'contact'].forEach(k => p[k] = pg === k);
+    const go = { home: () => this.go('home'), elmaor: () => this.go('elmaor') }; NAV.forEach(n => go[n.id] = () => this.go(n.id));
+    const activeNav = (pg === 'dept' || pg === 'elmaor') ? 'services' : pg;
+    const navItems = NAV.map(n => ({ ...n, onClick: go[n.id], color: n.id === 'elmaor' ? PUR : NAVY, bd: activeNav === n.id ? (n.id === 'elmaor' ? PUR : RED) : 'transparent' }));
+    const menuItems = [{ id: 'home', label: 'Home' }].concat(NAV).map(n => ({ label: n.label, onClick: go[n.id], color: n.id === 'elmaor' ? PUR : (activeNav === n.id ? RED : NAVY) }));
+    const depts = DEPTS.map(d => ({ ...d, iconCls: 'ph ' + d.icon, ic: d.id === 'elmaor' ? PUR : RED, bg: d.id === 'elmaor' ? '#F3EDF7' : '#fff', btn: d.id === 'elmaor' ? PUR : RED, open: () => d.page ? this.go(d.page) : this.go('dept', d.id), book: () => this.openBook(d.id) }));
+    const dept = depts.find(d => d.id === s.dept && !d.page) || depts[2];
+    const docAll = DOCS.map(d => ({ ...d, name: 'Doctor name', daysLabel: d.days.join(' · '), roleColor: d.dept === 'elmaor' ? PUR : RED, book: () => this.openBook(d.dept) }));
+    const deptDocs = docAll.filter(d => d.dept === dept.id);
+    const docs = docAll.filter(d => (s.docDept === 'all' || d.dept === s.docDept) && (s.docDay === 'Any' || d.days.includes(s.docDay)));
+    const docDeptChips = [{ id: 'all', name: 'All' }].concat(DEPTS).map(d => ({ label: d.id === 'elmaor' ? 'Elmaor' : d.name, ...chip(s.docDept === d.id), onClick: () => this.setState({ docDept: d.id }) }));
+    const docDayChips = ['Any', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => ({ label: d, ...chip(s.docDay === d), onClick: () => this.setState({ docDay: d }) }));
+
+    let res = { t: '', b: '', bg: '#fff', fg: NAVY, icon: '', book: () => {} };
+    if (s.hmoRes) {
+      const svc = DEPTS.find(d => d.id === s.hmoRes.svc); const h = s.hmoRes.hmo;
+      const code = svc.id === 'elmaor' ? 2 : ((HMOS.indexOf(h) + DEPTS.indexOf(svc)) % 4 === 3 ? 1 : 0);
+      res = [
+        { t: 'Usually covered', b: `Most ${h} plans cover ${svc.name.toLowerCase()} at Rouz. Bring your HMO card and enrollee ID.`, bg: '#E8F1EA', fg: '#1E5B33', icon: 'ph ph-check-circle' },
+        { t: 'Pre-authorisation needed', b: `${h} usually needs a pre-authorisation code for ${svc.name.toLowerCase()}. We can request it for you; allow one working day.`, bg: '#FBF1DD', fg: '#7A5200', icon: 'ph ph-clock' },
+        { t: 'Not usually covered', b: `${svc.name} is not covered on most ${h} plans. Ask us for self-pay rates.`, bg: '#F8E4E5', fg: '#8A1A24', icon: 'ph ph-x-circle' }
+      ][code];
+      res.book = () => this.openBook(svc.id);
+    }
+
+    const bag = BAG.map((t, i) => { const on = !!s.bag[i]; return { t, fg: on ? '#7A8194' : NAVY, td: on ? 'line-through' : 'none', bd: on ? RED : '#B9B0A0', bg: on ? RED : '#fff', icon: on ? 'ph ph-check' : '', toggle: () => { const bg = { ...s.bag, [i]: !on }; LS('bag', bg); this.setState({ bag: bg }); } }; });
+
+    const b = s.book, d = b ? b.data : emptyBk(), err = b ? b.err : {};
+    const F = ['first', 'last', 'phone', 'email', 'dob', 'hmo', 'hmoId', 'reason'];
+    const bdr = {}, on = {};
+    F.forEach(k => { bdr[k] = err[k] ? RED : '#D8D0C2'; on[k] = e => this.setF(k, e.target.value); });
+    on.notEmerg = e => this.setF('notEmerg', e.target.checked);
+    const days = []; const dt = new Date();
+    while (days.length < 6) { dt.setDate(dt.getDate() + 1); if (dt.getDay() !== 0) days.push(dt.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })); }
+    const step = b ? b.step : 1;
+    const clinic = DEPTS.find(x => x.id === d.clinic);
+    const st = { s1: step === 1, s2: step === 2, s3: step === 3, s4: step === 4, s5: step === 5 };
+    const review = [
+      { k: 'Clinic', v: clinic ? clinic.name : '', n: 1 }, { k: 'When', v: `${d.day}, ${d.slot.toLowerCase()}`, n: 1 }, { k: 'Patient', v: `${d.first} ${d.last} · ${d.patient.toLowerCase()}`, n: 2 },
+      { k: 'Phone', v: d.phone, n: 2 }, { k: 'Email', v: d.email || 'Not given', n: 2 }, { k: 'Date of birth', v: d.dob, n: 2 },
+      { k: 'Payment', v: d.pay === 'HMO' ? `${d.hmo} · ${d.hmoId}` : d.pay, n: 3 }, { k: 'Reason', v: d.reason, n: 3 }
+    ].map(r => ({ ...r, edit: () => this.setStep(r.n) }));
+
+    const simOpen = !!s.sim;
+    const waChips = ['Check my HMO cover', 'Book antenatal care', 'Elmaor enquiry'].map(t => ({ label: t, onClick: () => this.setState({ waMsg: `Hello Rouz, I'd like to ${t === 'Elmaor enquiry' ? 'ask about Elmaor Fertility Clinic' : t.toLowerCase()}.` }) }));
+
+    return {
+      isDesktop: !mob, isMobile: mob, p, go, navItems, menuItems, depts, dept, deptDocs, noDeptDocs: deptDocs.length === 0,
+      pageLabel: LABELS[pg] + (pg === 'dept' ? ': ' + dept.name : ''),
+      deviceChips: [['desktop', 'Desktop', 'ph ph-desktop'], ['mobile', 'Mobile', 'ph ph-device-mobile']].map(([id, label, icon]) => ({ label, icon, bg: s.device === id ? '#fff' : 'transparent', fg: s.device === id ? NAVY : '#C9CEDA', onClick: () => { LS('device', id); this.setState({ device: id, menu: false }); } })),
+      resetAll: () => { LS('bag', {}); LS('page', 'home'); this.setState({ page: 'home', menu: false, book: null, sim: null, bag: {}, docDept: 'all', docDay: 'Any', hmo: '', svc: '', hmoRes: null, waMsg: '', waSent: false }); const el = this.scrollRef.current; if (el) el.scrollTop = 0; },
+      outerPad: mob ? '24px 0 40px' : '0', fw: mob ? '390px' : 'min(1440px, 100%)', fh: mob ? '844px' : 'calc(100vh - 56px)', fr: mob ? '40px' : '0', fbd: mob ? '10px solid #1F4FB4' : '0',
+      headPad: mob ? '10px 20px' : '14px clamp(20px,8.3cqi,120px)', logoH: mob ? '36px' : '46px', footBottom: mob ? '32px' : '40px',
+      scrollRef: this.scrollRef, menuOpen: s.menu, toggleMenu: () => this.setState({ menu: !s.menu }),
+      openBookAny: () => this.openBook(''), bookMaternity: () => this.openBook('maternity'), bookElmaor: () => this.openBook('elmaor'),
+      insidePhotos: [
+        { src: 'assets/reception.jpg', t: 'Reception and waiting area', d: 'Patients register here before being called to consulting rooms.' },
+        { src: 'assets/nurses-station.jpg', t: "Nurses' station and triage", d: 'Computer workstation and storage for records and consumables.' },
+        { src: 'assets/laboratory.jpg', t: 'Diagnostic laboratory', d: 'Haematology and chemistry analysers, incubator and centrifuges.' },
+        { src: 'assets/pharmacy.jpg', t: 'Pharmacy and medical stores', d: 'Refrigerated cold-chain storage for vaccines.' }
+      ],
+      matSteps: [
+        { n: '01', t: 'Booking visit', d: 'Your history, first tests and an obstetric ultrasound on site.' },
+        { n: '02', t: 'Antenatal clinic', d: 'Regular checks with the same team through your pregnancy.' },
+        { n: '03', t: 'Labour and delivery', d: 'Delivery on site, with the SCBU next door if your baby needs it.' },
+        { n: '04', t: 'Postnatal and baby', d: 'Follow-up for you, then immunisation and child health in Paediatrics.' }
+      ],
+      elmSteps: [
+        { n: '01', t: 'Consultation', d: 'Your history, your questions, and a plan for tests.' },
+        { n: '02', t: 'Assessment', d: 'Laboratory and ultrasound on site, results explained in person.' },
+        { n: '03', t: 'Treatment', d: 'IVF or other treatment cycles, with costs agreed in advance.' },
+        { n: '04', t: 'Pregnancy and birth', d: 'Antenatal care and delivery continue at Rouz, under one record.' }
+      ],
+      bag, bagCount: `${Object.values(s.bag).filter(Boolean).length} of ${BAG.length} packed`,
+      docs, docDeptChips, docDayChips, docCount: `${docs.length} ${docs.length === 1 ? 'doctor' : 'doctors'}`, noDocs: docs.length === 0,
+      clearDocFilters: () => this.setState({ docDept: 'all', docDay: 'Any' }),
+      issues: [{ n: 4 }, { n: 3 }, { n: 2 }, { n: 1 }], topics: ['Neonatal outcomes', 'Maternity care', 'Fertility and IVF'],
+      stats: [{ v: '15', l: 'inpatient beds' }, { v: '8', l: 'departments' }, { v: '22', l: 'clinical and support staff' }, { v: '2,000+', l: 'patient records' }],
+      hmoList: HMOS, hmoSel: s.hmo, svcSel: s.svc,
+      setHmo: e => this.setState({ hmo: e.target.value, hmoRes: null }), setSvc: e => this.setState({ svc: e.target.value, hmoRes: null }),
+      checkBg: s.hmo && s.svc ? RED : '#B9B0A0',
+      runCheck: () => { if (s.hmo && s.svc) this.setState({ hmoRes: { hmo: s.hmo, svc: s.svc } }); },
+      hasRes: !!s.hmoRes, res,
+      footCare: ['maternity', 'services', 'elmaor', 'doctors'].map(id => ({ label: id === 'elmaor' ? 'Elmaor Fertility Clinic' : LABELS[id], onClick: go[id] })),
+      footHosp: ['about', 'news', 'hmos', 'contact'].map(id => ({ label: LABELS[id], onClick: go[id] })),
+      bookOpen: !!b, closeBook: () => this.setState({ book: null }), st, showSteps: step < 5, showBack: step > 1 && step < 5, noBack: step === 1 || step === 5,
+      stepLabel: `Step ${Math.min(step, 4)} of 4 · ${STEPS[Math.min(step, 4) - 1]}`,
+      stepItems: STEPS.map((t, i) => ({ t, bar: step > i ? RED : '#E6E0D4', fg: step === i + 1 ? NAVY : '#7A8194' })),
+      nextLabel: step === 4 ? 'Send request' : 'Continue',
+      back: () => this.setStep(step - 1), next: this.next,
+      bk: d, err, bdr, on, payHmo: d.pay === 'HMO',
+      clinicChips: DEPTS.map(x => ({ label: x.name, ...chip(d.clinic === x.id, x.id === 'elmaor' ? PUR : RED), onClick: () => this.setF('clinic', x.id) })),
+      patientChips: ['New patient', 'Returning patient'].map(x => ({ label: x, ...chip(d.patient === x), onClick: () => this.setF('patient', x) })),
+      dayChips: days.map(x => ({ label: x, ...chip(d.day === x, RED), onClick: () => this.setF('day', x) })),
+      slotChips: ['Morning', 'Afternoon'].map(x => ({ label: x, ...chip(d.slot === x, RED), onClick: () => this.setF('slot', x) })),
+      payChips: ['HMO', 'Self-pay'].map(x => ({ label: x, ...chip(d.pay === x), onClick: () => this.setF('pay', x) })),
+      review, bookRef: b && b.ref ? b.ref : '',
+      confirmText: `We will call ${d.first || 'you'} on ${d.phone} to agree a time for ${clinic ? clinic.name : 'your clinic'} on ${d.day}.`,
+      ovPad: mob ? '0' : '40px', mH: mob ? '100%' : 'auto', mR: mob ? '0' : '14px', simR: mob ? '16px 16px 0 0' : '14px',
+      simOpen, simCallOn: s.sim === 'call', simWaOn: s.sim === 'wa',
+      simCall: () => this.setState({ sim: 'call', num: 0, menu: false }), simWa: () => this.setState({ sim: 'wa', waSent: false, menu: false }),
+      closeSim: () => this.setState({ sim: null }), stop: e => e.stopPropagation(),
+      callNum: NUMS[s.num], altNum: NUMS[1 - s.num], swapNum: () => this.setState({ num: 1 - s.num }),
+      waMsg: s.waMsg, waSent: s.waSent, waNotSent: !s.waSent, waChips,
+      setWa: e => this.setState({ waMsg: e.target.value, waSent: false }),
+      sendWa: () => { if (s.waMsg.trim()) this.setState({ waSent: true }); }
+    };
+  }
+}
+</script>
+</body>
+</html>
