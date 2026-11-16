@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { Resend } from 'resend';
 import { DEPTS, HMOS } from '@/lib/data';
 
 export const runtime = 'nodejs';
@@ -60,19 +61,19 @@ export async function POST(req: Request) {
   const html = `<h2>New appointment request ${esc(ref)}</h2><table cellpadding="6">${rows.map(([k, v]) => `<tr><td><b>${esc(k)}</b></td><td>${esc(v)}</td></tr>`).join('')}</table><p>Call the patient to agree an exact time.</p>`;
   const text = rows.map(([k, v]) => `${k}: ${v}`).join('\n');
 
-  const r = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
+  const resend = new Resend(key);
+  const { data, error } = await resend.emails.send(
+    {
       from, to: to.split(',').map(s => s.trim()).filter(Boolean),
       subject: `Appointment request ${ref}: ${clinic!.name}, ${d.day}`,
-      html, text, ...(d.email ? { reply_to: d.email } : {}),
-    }),
-  }).catch(() => null);
-  if (!r || !r.ok) {
-    console.error('[booking] email send failed', r?.status);
+      html, text, ...(d.email ? { replyTo: d.email } : {}),
+    },
+    { idempotencyKey: `booking/${ref}` },
+  ).catch(e => ({ data: null, error: { name: 'network', message: String(e?.message ?? e) } }));
+  if (error) {
+    console.error('[booking] email send failed', error.name);
     return NextResponse.json({ error: 'Could not send' }, { status: 502 });
   }
-  console.log('[booking] sent', ref);
+  console.log('[booking] sent', ref, 'email id', data?.id);
   return NextResponse.json({ ref });
 }
