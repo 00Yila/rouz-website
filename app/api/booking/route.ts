@@ -6,9 +6,31 @@ export const runtime = 'nodejs';
 const str = (v: unknown, max = 500) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 const esc = (s: string) => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
 
+// Best-effort per-instance limiter. On serverless each instance has its own memory, so this slows
+// casual abuse only; use a shared store (e.g. Upstash/Vercel KV) or Vercel's firewall for a hard limit.
+const hits = new Map<string, number[]>();
+const WINDOW = 10 * 60_000, MAX = 5;
+function limited(ip: string) {
+  const now = Date.now();
+  const recent = (hits.get(ip) ?? []).filter(t => now - t < WINDOW);
+  recent.push(now); hits.set(ip, recent);
+  if (hits.size > 5000) for (const [k, v] of hits) if (!v.some(t => now - t < WINDOW)) hits.delete(k);
+  return recent.length > MAX;
+}
+
 export async function POST(req: Request) {
+  const origin = req.headers.get('origin');
+  if (origin && origin !== new URL(req.url).origin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  const ip = (req.headers.get('x-forwarded-for') ?? 'unknown').split(',')[0].trim();
+  if (limited(ip)) return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: { 'Retry-After': '600' } });
+
   const b = await req.json().catch(() => null);
   if (!b || typeof b !== 'object') return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+
+  // Bots fill hidden fields and submit instantly. Pretend success so they do not retry; send nothing.
+  if (str(b.website) || !(Number(b.elapsedMs) >= 4000)) {
+    return NextResponse.json({ ref: 'RZ-' + Math.floor(10000 + Math.random() * 89999) });
+  }
 
   const d = {
     clinic: str(b.clinic, 40), patient: str(b.patient, 40), day: str(b.day, 40), slot: str(b.slot, 20),

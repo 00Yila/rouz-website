@@ -37,8 +37,10 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
   const [ref, setRef] = useState('');
   const [busy, setBusy] = useState(false);
   const [sendErr, setSendErr] = useState('');
+  const [hp, setHp] = useState('');
+  const [openedAt, setOpenedAt] = useState(0);
 
-  const openBook = (clinic = '') => { setD(empty(clinic)); setStep(1); setErr({}); setRef(''); setSendErr(''); setOpen(true); };
+  const openBook = (clinic = '') => { setD(empty(clinic)); setStep(1); setErr({}); setRef(''); setSendErr(''); setHp(''); setOpenedAt(Date.now()); setOpen(true); };
   const set = <K extends keyof Bk>(k: K, v: Bk[K]) => { setD(p => ({ ...p, [k]: v })); setErr(p => ({ ...p, [k]: undefined })); };
   const days = useMemo(() => {
     const out: string[] = []; const dt = new Date();
@@ -52,7 +54,8 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     if (step < 4) { setStep(step + 1); return; }
     setBusy(true); setSendErr('');
     try {
-      const r = await fetch('/api/booking', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) });
+      const r = await fetch('/api/booking', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...d, website: hp, elapsedMs: Date.now() - openedAt }) });
+      if (r.status === 429) { setSendErr('Too many requests. Please wait a few minutes, or call us.'); setBusy(false); return; }
       if (!r.ok) throw new Error();
       setRef((await r.json()).ref); setStep(5);
     } catch { setSendErr('Could not send your request. Please try again, or call us.'); }
@@ -126,6 +129,8 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
                 </label><Err k="notEmerg" />
               </>}
               {step === 4 && <>
+                <div aria-hidden="true" style={{ position: 'absolute', left: -9999, width: 1, height: 1, overflow: 'hidden' }}>
+                  <label>Website<input tabIndex={-1} autoComplete="off" value={hp} onChange={e => setHp(e.target.value)} /></label></div>
                 <div style={{ fontSize: 15, color: '#4A5468', marginBottom: 12 }}>Check your request before sending.</div>
                 {review.map(([k, v, n]) => <div key={k} style={{ display: 'grid', gridTemplateColumns: 'minmax(0,130px) minmax(0,1fr) auto', gap: 12, padding: '14px 0', borderTop: '1px solid #EFE9DE', fontSize: 15, alignItems: 'start' }}>
                   <span style={{ color: '#4A5468' }}>{k}</span><span style={{ fontWeight: 500, overflowWrap: 'anywhere' }}>{v}</span>
