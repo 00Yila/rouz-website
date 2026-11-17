@@ -31,3 +31,7 @@ export const tel = (n: string) => 'tel:+234' + n.replace(/\D/g, '').slice(1);
 // Placeholder: confirm the WhatsApp number with the hospital.
 export const WA_URL = 'https://wa.me/2347044736867';
 export const RED = '#B1232F', PUR = '#5A2A82', BLUE = '#1F4FB4';
+export const ADDRESS = '10 Mobolaji Johnson Street, Apo Quarters Zone D, Gudu District, Abuja, Nigeria';
+export const MAPS_EMBED = `https://www.google.com/maps?q=${encodeURIComponent('Rouz Hospital and Maternity, ' + ADDRESS)}&output=embed`;
+export const MAPS_DIRECTIONS = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent('Rouz Hospital and Maternity, ' + ADDRESS)}`;
+export const GOOGLE_PROFILE = 'https://share.google/VBkLtEs2Z6VENvFf3';
