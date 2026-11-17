@@ -3,10 +3,11 @@ import './globals.css';
 import Shell from '@/components/Shell';
 import { GOOGLE_PROFILE, PHONES } from '@/lib/data';
 
-// Opening hours are omitted until the hospital confirms them. Coordinates come from the Google Maps embed.
+// Coordinates come from the Google Maps embed.
 const ld = {
   '@context': 'https://schema.org', '@type': 'Hospital', name: 'Rouz Hospital and Maternity',
   telephone: PHONES.map(n => '+234' + n.replace(/\D/g, '').slice(1)), email: 'rouzhmltd@yahoo.com', sameAs: [GOOGLE_PROFILE], geo: { '@type': 'GeoCoordinates', latitude: 9.001072, longitude: 7.476962 },
+  openingHoursSpecification: { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], opens: '00:00', closes: '23:59' },
   address: { '@type': 'PostalAddress', streetAddress: '10 Mobolaji Johnson Street, Apo Quarters Zone D', addressLocality: 'Gudu District, Abuja', addressCountry: 'NG' },
 };
 

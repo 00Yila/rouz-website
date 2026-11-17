@@ -2,14 +2,14 @@ import BookButton from '@/components/BookButton';
 import { Crumbs } from '@/components/Bits';
 import { PHONES, tel, WA_URL, MAPS_EMBED, MAPS_DIRECTIONS, GOOGLE_PROFILE } from '@/lib/data';
 export const metadata = { title: 'Visit · Rouz Hospital' };
-const rows = [['Address', '10 Mobolaji Johnson Str., Apo Quarters Zone D, 2nd Gate, Gudu District, P.O. Box 3115, Garki–Abuja'], ['Phone', PHONES.join(' · ')], ['Email', 'rouzhmltd@yahoo.com'], ['Clinic hours', 'To confirm with the hospital'], ['On site', 'Parking inside a walled, gated perimeter']];
+const rows = [['Address', '10 Mobolaji Johnson Str., Apo Quarters Zone D, 2nd Gate, Gudu District, P.O. Box 3115, Garki–Abuja'], ['Phone', PHONES.join(' · ')], ['Email', 'rouzhmltd@yahoo.com'], ['Hours', 'Open 24 hours'], ['On site', 'Parking inside a walled, gated perimeter']];
 const way = { border: '1px solid #E6E0D4', background: '#fff', borderRadius: 10, padding: 26, textAlign: 'left', color: '#1F4FB4', display: 'flex', flexDirection: 'column', gap: 8 } as const;
 export default function Contact() {
   return (<>
     <div className="hero-band" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,400px),1fr))', gap: 'clamp(32px,5vw,64px)' }}>
       <div><Crumbs trail={[['Visit']]} /><h1 className="h1" style={{ margin: '16px 0 28px' }}>Come in, or call first.</h1>
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,120px) minmax(0,1fr)', gap: 16, fontSize: 16, lineHeight: 1.55 }}>
-          {rows.map(([k, v]) => <><span key={k} style={{ color: '#4A5468' }}>{k}</span><span key={k + 'v'} style={k === 'Clinic hours' ? { color: '#B1232F' } : {}}>{v}</span></>)}</div></div>
+          {rows.map(([k, v]) => <><span key={k} style={{ color: '#4A5468' }}>{k}</span><span key={k + 'v'} style={{}}>{v}</span></>)}</div></div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         <iframe title="Map showing Rouz Hospital and Maternity, Apo Quarters, Abuja" src={MAPS_EMBED} loading="lazy" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen style={{ border: 0, borderRadius: 12, width: '100%', minHeight: 340, flex: 1 }} />
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
