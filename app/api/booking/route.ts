@@ -28,9 +28,20 @@ export async function POST(req: Request) {
   const b = await req.json().catch(() => null);
   if (!b || typeof b !== 'object') return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
 
-  // Bots fill hidden fields and submit instantly. Pretend success so they do not retry; send nothing.
-  if (str(b.website) || !(Number(b.elapsedMs) >= 4000)) {
+  // Bots submit instantly. Pretend success so they do not retry; send nothing.
+  if (!(Number(b.elapsedMs) >= 4000)) {
     return NextResponse.json({ ref: 'RZ-' + Math.floor(10000 + Math.random() * 89999) });
+  }
+
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+  if (secret) {
+    const token = str(b.turnstileToken, 2048);
+    const v = token ? await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ secret, response: token, remoteip: ip }),
+    }).then(r => r.json() as Promise<{ success?: boolean }>).catch(() => null) : null;
+    if (!v?.success) return NextResponse.json({ error: 'Captcha failed' }, { status: 403 });
+  } else {
+    console.warn('[booking] TURNSTILE_SECRET_KEY is not set: captcha check skipped');
   }
 
   const d = {

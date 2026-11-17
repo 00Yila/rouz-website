@@ -1,6 +1,7 @@
 'use client';
 import { createContext, useContext, useState, useMemo } from 'react';
-import { DEPTS, HMOS, RED, PUR } from '@/lib/data';
+import { DEPTS, HMOS, RED } from '@/lib/data';
+import Turnstile, { TURNSTILE_SITE_KEY } from './Turnstile';
 
 const Ctx = createContext<{ openBook: (clinic?: string) => void }>({ openBook: () => {} });
 export const useBooking = () => useContext(Ctx);
@@ -37,10 +38,11 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
   const [ref, setRef] = useState('');
   const [busy, setBusy] = useState(false);
   const [sendErr, setSendErr] = useState('');
-  const [hp, setHp] = useState('');
+  const [token, setToken] = useState('');
+  const [tsReset, setTsReset] = useState(0);
   const [openedAt, setOpenedAt] = useState(0);
 
-  const openBook = (clinic = '') => { setD(empty(clinic)); setStep(1); setErr({}); setRef(''); setSendErr(''); setHp(''); setOpenedAt(Date.now()); setOpen(true); };
+  const openBook = (clinic = '') => { setD(empty(clinic)); setStep(1); setErr({}); setRef(''); setSendErr(''); setToken(''); setOpenedAt(Date.now()); setOpen(true); };
   const set = <K extends keyof Bk>(k: K, v: Bk[K]) => { setD(p => ({ ...p, [k]: v })); setErr(p => ({ ...p, [k]: undefined })); };
   const days = useMemo(() => {
     const out: string[] = []; const dt = new Date();
@@ -52,13 +54,15 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     const e = validate(step, d);
     if (Object.keys(e).length) { setErr(e); return; }
     if (step < 4) { setStep(step + 1); return; }
+    if (TURNSTILE_SITE_KEY && !token) { setSendErr('Please complete the check below before sending.'); return; }
     setBusy(true); setSendErr('');
     try {
-      const r = await fetch('/api/booking', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...d, website: hp, elapsedMs: Date.now() - openedAt }) });
+      const r = await fetch('/api/booking', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...d, turnstileToken: token, elapsedMs: Date.now() - openedAt }) });
+      if (r.status === 403) { setSendErr('We could not verify you are human. Please try again.'); setTsReset(n => n + 1); setBusy(false); return; }
       if (r.status === 429) { setSendErr('Too many requests. Please wait a few minutes, or call us.'); setBusy(false); return; }
       if (!r.ok) throw new Error();
       setRef((await r.json()).ref); setStep(5);
-    } catch { setSendErr('Could not send your request. Please try again, or call us.'); }
+    } catch { setSendErr('Could not send your request. Please try again, or call us.'); setTsReset(n => n + 1); }
     setBusy(false);
   };
 
@@ -129,12 +133,11 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
                 </label><Err k="notEmerg" />
               </>}
               {step === 4 && <>
-                <div aria-hidden="true" style={{ position: 'absolute', left: -9999, width: 1, height: 1, overflow: 'hidden' }}>
-                  <label>Website<input tabIndex={-1} autoComplete="off" value={hp} onChange={e => setHp(e.target.value)} /></label></div>
                 <div style={{ fontSize: 15, color: '#4A5468', marginBottom: 12 }}>Check your request before sending.</div>
                 {review.map(([k, v, n]) => <div key={k} style={{ display: 'grid', gridTemplateColumns: 'minmax(0,130px) minmax(0,1fr) auto', gap: 12, padding: '14px 0', borderTop: '1px solid #EFE9DE', fontSize: 15, alignItems: 'start' }}>
                   <span style={{ color: '#4A5468' }}>{k}</span><span style={{ fontWeight: 500, overflowWrap: 'anywhere' }}>{v}</span>
                   <button onClick={() => setStep(n)} style={{ background: 'none', border: 0, padding: 0, color: RED, fontWeight: 600, fontSize: 14 }}>Edit</button></div>)}
+                {TURNSTILE_SITE_KEY && <Turnstile onToken={setToken} resetKey={tsReset} />}
                 {sendErr && <div className="err" style={{ marginTop: 12 }}>{sendErr}</div>}
               </>}
               {step === 5 && <div style={{ textAlign: 'center', padding: '24px 4px' }}>
