@@ -111,9 +111,9 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
               </>}
               {step === 2 && <>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,240px),1fr))', gap: 16 }}>
-                  <F k="first" label="First name" ac="given-name" /><F k="last" label="Surname" ac="family-name" />
-                  <F k="phone" label="Phone number" type="tel" ph="0803 123 4567" ac="tel" /><F k="email" label="Email (optional)" type="email" ac="email" />
-                  <F k="dob" label="Date of birth" type="date" />
+                  {F({ k: 'first', label: 'First name', ac: 'given-name' })}{F({ k: 'last', label: 'Surname', ac: 'family-name' })}
+                  {F({ k: 'phone', label: 'Phone number', type: 'tel', ph: '0803 123 4567', ac: 'tel' })}{F({ k: 'email', label: 'Email (optional)', type: 'email', ac: 'email' })}
+                  {F({ k: 'dob', label: 'Date of birth', type: 'date' })}
                 </div>
                 <p style={{ fontSize: 13, color: '#4A5468', margin: '18px 0 0' }}>Booking for a child? Enter the child&apos;s name and date of birth, and a parent&apos;s phone number.</p>
               </>}
@@ -122,7 +122,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
                 <div style={{ display: 'flex', gap: 8 }}>{['HMO', 'Self-pay'].map(x => <button key={x} className={chip(d.pay === x) + ' sq'} onClick={() => set('pay', x)}>{x}</button>)}</div><Err k="pay" />
                 {d.pay === 'HMO' && <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,240px),1fr))', gap: 16, marginTop: 18 }}>
                   <label className={`field ${err.hmo ? 'bad' : ''}`}>HMO<select value={d.hmo} onChange={e => set('hmo', e.target.value)}><option value="">Choose</option>{HMOS.map(h => <option key={h}>{h}</option>)}</select>{err.hmo && <span className="err">{err.hmo}</span>}</label>
-                  <F k="hmoId" label="Enrollee ID" />
+                  {F({ k: 'hmoId', label: 'Enrollee ID' })}
                 </div>}
                 <label className={`field ${err.reason ? 'bad' : ''}`} style={{ marginTop: 22 }}>Reason for your visit
                   <textarea rows={4} placeholder="For example: first antenatal visit, 12 weeks pregnant" value={d.reason} onChange={e => set('reason', e.target.value)} />
