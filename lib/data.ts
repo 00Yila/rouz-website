@@ -32,6 +32,6 @@ export const tel = (n: string) => 'tel:+234' + n.replace(/\D/g, '').slice(1);
 export const WA_URL = 'https://wa.me/2347044736867';
 export const RED = '#B1232F', PUR = '#5A2A82', BLUE = '#1F4FB4';
 export const ADDRESS = '10 Mobolaji Johnson Street, Apo Quarters Zone D, Gudu District, Abuja, Nigeria';
-export const MAPS_EMBED = `https://www.google.com/maps?q=${encodeURIComponent('Rouz Hospital and Maternity, ' + ADDRESS)}&output=embed`;
+export const MAPS_EMBED = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4910.463396441777!2d7.476961675872486!3d9.001071889423718!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x104e0cf50e056105%3A0xb2874f4b4b52b8d4!2sRouz%20Hospital%20and%20Maternity!5e1!3m2!1sen!2sng!4v1794936505607!5m2!1sen!2sng';
 export const MAPS_DIRECTIONS = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent('Rouz Hospital and Maternity, ' + ADDRESS)}`;
 export const GOOGLE_PROFILE = 'https://share.google/VBkLtEs2Z6VENvFf3';

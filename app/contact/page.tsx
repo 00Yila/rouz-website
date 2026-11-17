@@ -11,7 +11,7 @@ export default function Contact() {
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,120px) minmax(0,1fr)', gap: 16, fontSize: 16, lineHeight: 1.55 }}>
           {rows.map(([k, v]) => <><span key={k} style={{ color: '#4A5468' }}>{k}</span><span key={k + 'v'} style={k === 'Clinic hours' ? { color: '#B1232F' } : {}}>{v}</span></>)}</div></div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <iframe title="Map showing Rouz Hospital and Maternity, Apo Quarters, Abuja" src={MAPS_EMBED} loading="lazy" referrerPolicy="no-referrer-when-downgrade" style={{ border: 0, borderRadius: 12, width: '100%', minHeight: 340, flex: 1 }} />
+        <iframe title="Map showing Rouz Hospital and Maternity, Apo Quarters, Abuja" src={MAPS_EMBED} loading="lazy" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen style={{ border: 0, borderRadius: 12, width: '100%', minHeight: 340, flex: 1 }} />
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <a href={MAPS_DIRECTIONS} target="_blank" rel="noopener noreferrer" className="btn sm"><i className="ph ph-navigation-arrow" />Get directions</a>
           <a href={GOOGLE_PROFILE} target="_blank" rel="noopener noreferrer" className="btn ghost sm"><i className="ph ph-star" />View on Google</a>
